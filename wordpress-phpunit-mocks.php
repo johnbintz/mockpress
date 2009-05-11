@@ -4,7 +4,11 @@ $wp_test_expectations = array();
 
 function _reset_wp() {
 	global $wp_test_expectations;
-	$wp_test_expectations = array();
+	$wp_test_expectations = array(
+    'options' => array(),
+    'categories' => array(),
+    'post_categories' => array()
+  );
 }
 
 /* WordPress Test Doubles */
@@ -65,6 +69,20 @@ function get_cat_name($id) {
   global $wp_test_expectations;
   return $wp_test_expectations['categories'][$id]->name;
 }
-                                        
+                  
+function wp_set_post_categories($post_id, $categories) {
+  global $wp_test_expectations;
+  if (!is_array($categories)) { $categories = array($categories); }
+  $wp_test_expectations['post_categories'][$post_id] = $categories;
+}
+
+function wp_get_post_categories($post_id) {
+  global $wp_test_expectations;
+  if (!isset($wp_test_expectations['post_categories'][$post_id])) {
+    return array();
+  } else {
+    return $wp_test_expectations['post_categories'][$post_id];
+  }
+}
 
 ?>
