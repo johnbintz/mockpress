@@ -53,7 +53,11 @@ function add_category($id, $object) {
     
 function get_category($id) {
   global $wp_test_expectations;
-  return $wp_test_expectations['categories'][$id];
+  if (!isset($wp_test_expectations['categories'])) {
+    return null;
+  } else {
+    return $wp_test_expectations['categories'][$id];
+  }
 }
         
 function get_all_category_ids() {
