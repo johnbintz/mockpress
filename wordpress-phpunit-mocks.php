@@ -1,7 +1,15 @@
 <?php
 
+/**
+ * Simulate enough of WordPress to test plugins and themes using PHPUnit, SimpleTest, or any other PHP unit testing framework.
+ * @author John Bintz
+ */
+
 $wp_test_expectations = array();
 
+/**
+ * Reset the WordPress test expectations.
+ */
 function _reset_wp() {
 	global $wp_test_expectations;
 	$wp_test_expectations = array(
@@ -87,6 +95,10 @@ function wp_get_post_categories($post_id) {
   } else {
     return $wp_test_expectations['post_categories'][$post_id];
   }
+}
+
+function get_posts($query) {
+  return isset($wp_test_expectations['get_posts'][$query]) ? $wp_test_expectations['get_posts'][$query] : false;
 }
 
 ?>
