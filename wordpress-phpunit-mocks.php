@@ -119,4 +119,19 @@ function add_submenu_page($parent, $page_title, $menu_title, $access_level, $fil
   return "hook name";
 }
 
+function wp_nonce_field($name) {
+  echo "<input type=\"hidden\" name=\"${name}\" value=\"" . md5(rand()) . "\" />";
+}
+
+// For use with SimpleXML
+
+function _node_exists($xml, $xpath) {
+  return count($xml->xpath($xpath)) > 0;
+}
+
+function _get_node_value($xml, $xpath) {
+  $result = $xml->xpath($xpath);
+  return (count($result) > 0) ? (string)reset($result) : null;
+}
+
 ?>
