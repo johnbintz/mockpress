@@ -7,7 +7,9 @@ function _reset_wp() {
 	$wp_test_expectations = array(
     'options' => array(),
     'categories' => array(),
-    'post_categories' => array()
+    'post_categories' => array(),
+    'get_posts' => array(),
+    'pages' => array()
   );
 }
 
@@ -48,6 +50,7 @@ function untrailingslashit($string) {
 
 function add_category($id, $object) {
   global $wp_test_expectations;
+  $object->cat_ID = $id;
   $wp_test_expectations['categories'][$id] = $object;
 }
     
@@ -87,6 +90,33 @@ function wp_get_post_categories($post_id) {
   } else {
     return $wp_test_expectations['post_categories'][$post_id];
   }
+}
+
+function _set_up_get_posts_response($query, $result) {
+  global $wp_test_expectations;
+  $wp_test_expectations['get_posts'][$query] = $result;
+}
+
+function get_posts($query) {
+  global $wp_test_expectations;
+  
+  if (isset($wp_test_expectations['get_posts'][$query])) {
+    return isset($wp_test_expectations['get_posts'][$query]);
+  } else {
+    return array();
+  }
+}
+
+function add_options_page($page_title, $menu_title, $access_level, $file, $function = "") {
+  add_submenu_page('options-general.php', $page_title, $menu_title, $access_level, $file, $function);
+}
+
+function add_submenu_page($parent, $page_title, $menu_title, $access_level, $file, $function = "") {
+  global $wp_test_expectations;
+  
+  $wp_test_expectations['pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function');
+  
+  return "hook name";
 }
 
 ?>
