@@ -15,7 +15,12 @@ function _reset_wp() {
 	$wp_test_expectations = array(
     'options' => array(),
     'categories' => array(),
-    'post_categories' => array()
+    'post_categories' => array(),
+    'get_posts' => array(),
+    'pages' => array(),
+    'actions' => array(),
+    'filters' => array(),
+    'posts' => array()
   );
 }
 
@@ -56,6 +61,7 @@ function untrailingslashit($string) {
 
 function add_category($id, $object) {
   global $wp_test_expectations;
+  $object->cat_ID = $id;
   $wp_test_expectations['categories'][$id] = $object;
 }
     
@@ -97,8 +103,86 @@ function wp_get_post_categories($post_id) {
   }
 }
 
+function _set_up_get_posts_response($query, $result) {
+  global $wp_test_expectations;
+  $wp_test_expectations['get_posts'][$query] = $result;
+}
+
 function get_posts($query) {
-  return isset($wp_test_expectations['get_posts'][$query]) ? $wp_test_expectations['get_posts'][$query] : false;
+  global $wp_test_expectations;
+  
+  if (isset($wp_test_expectations['get_posts'][$query])) {
+    return isset($wp_test_expectations['get_posts'][$query]);
+  } else {
+    return array();
+  }
+}
+
+function wp_insert_post($array) {
+  global $wp_test_expectations;
+
+  if (isset($array['ID'])) {
+    $id = $array['ID'];
+  } else {
+    if (count($wp_test_expectations['posts']) == 0) {
+      $id = 1;
+    } else {
+      $id = max(array_keys($wp_test_expectations['posts'])) + 1;
+    }
+  }
+  $wp_test_expectations['posts'][$id] = (object)$array;    
+  return $id;
+}
+
+function get_post($id) {
+  global $wp_test_expectations;
+  
+  if (isset($wp_test_expectations['posts'][$id])) {
+    return $wp_test_expectations['posts'][$id];
+  } else {
+    return null; 
+  }
+}
+
+function add_options_page($page_title, $menu_title, $access_level, $file, $function = "") {
+  add_submenu_page('options-general.php', $page_title, $menu_title, $access_level, $file, $function);
+}
+
+function add_submenu_page($parent, $page_title, $menu_title, $access_level, $file, $function = "") {
+  global $wp_test_expectations;
+  
+  $wp_test_expectations['pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function');
+  
+  return "hook name";
+}
+
+function add_action($name, $callback) {
+  global $wp_test_expectations;
+  $wp_test_expectations['actions'][$name] = $callback;
+}
+
+function add_filter($name, $callback) {
+  global $wp_test_expectations;
+  $wp_test_expectations['filters'][$name] = $callback;
+}
+
+function wp_nonce_field($name) {
+  echo "<input type=\"hidden\" name=\"${name}\" value=\"" . md5(rand()) . "\" />";
+}
+
+function __($string, $namespace) {
+  return $string;
+}
+
+// For use with SimpleXML
+
+function _node_exists($xml, $xpath) {
+  return count($xml->xpath($xpath)) > 0;
+}
+
+function _get_node_value($xml, $xpath) {
+  $result = $xml->xpath($xpath);
+  return (count($result) > 0) ? (string)reset($result) : null;
 }
 
 ?>
