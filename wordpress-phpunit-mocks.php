@@ -61,7 +61,7 @@ function untrailingslashit($string) {
 
 function add_category($id, $object) {
   global $wp_test_expectations;
-  $object->cat_ID = $id;
+  $object->cat_ID = $object->term_id = $id;
   $wp_test_expectations['categories'][$id] = $object;
 }
     
@@ -112,7 +112,7 @@ function get_posts($query) {
   global $wp_test_expectations;
   
   if (isset($wp_test_expectations['get_posts'][$query])) {
-    return isset($wp_test_expectations['get_posts'][$query]);
+    return $wp_test_expectations['get_posts'][$query];
   } else {
     return array();
   }
