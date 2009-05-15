@@ -197,12 +197,21 @@ function __($string, $namespace) {
 // For use with SimpleXML
 
 function _node_exists($xml, $xpath) {
-  return count($xml->xpath($xpath)) > 0;
+  $result = $xml->xpath($xpath);
+  if (is_array($result)) {
+    return count($xml->xpath($xpath)) > 0;
+  } else {
+    return false;
+  }
 }
 
 function _get_node_value($xml, $xpath) {
   $result = $xml->xpath($xpath);
-  return (count($result) > 0) ? (string)reset($result) : null;
+  if (is_array($result)) {
+    return (count($result) > 0) ? (string)reset($result) : null;
+  } else {
+    return false;
+  }
 }
 
 function _wrap_xml($string) {
