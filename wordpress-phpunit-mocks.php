@@ -190,6 +190,9 @@ function get_post_meta($post_id, $field, $single = false) {
   return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
 }
 
+function get_permalink($post) {
+}
+
 function __($string, $namespace) {
   return $string;
 }
