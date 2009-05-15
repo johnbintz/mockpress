@@ -20,7 +20,8 @@ function _reset_wp() {
     'pages' => array(),
     'actions' => array(),
     'filters' => array(),
-    'posts' => array()
+    'posts' => array(),
+    'post_meta' => array()
   );
 }
 
@@ -129,6 +130,7 @@ function wp_insert_post($array) {
     } else {
       $id = max(array_keys($wp_test_expectations['posts'])) + 1;
     }
+    $array['ID'] = $id;
   }
   $wp_test_expectations['posts'][$id] = (object)$array;    
   return $id;
@@ -168,6 +170,23 @@ function add_filter($name, $callback) {
 
 function wp_nonce_field($name) {
   echo "<input type=\"hidden\" name=\"${name}\" value=\"" . md5(rand()) . "\" />";
+}
+
+function update_post_meta($post_id, $field, $value) {
+  global $wp_test_expectations;
+  if (!isset($wp_test_expectations['post_meta'][$post_id])) {
+    $wp_test_expectations['post_meta'][$post_id] = array();
+  }
+  $wp_test_expectations['post_meta'][$post_id][$field] = $value;
+}
+
+function get_post_meta($post_id, $field, $single = false) {
+  global $wp_test_expectations;
+
+  if (!isset($wp_test_expectations['post_meta'][$post_id])) { return ""; }
+  if (!isset($wp_test_expectations['post_meta'][$post_id][$field])) { return ""; }
+  
+  return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
 }
 
 function __($string, $namespace) {
