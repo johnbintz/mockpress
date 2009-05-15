@@ -122,6 +122,7 @@ function get_posts($query) {
 function wp_insert_post($array) {
   global $wp_test_expectations;
 
+  $array = (array)$array;
   if (isset($array['ID'])) {
     $id = $array['ID'];
   } else {
@@ -202,6 +203,10 @@ function _node_exists($xml, $xpath) {
 function _get_node_value($xml, $xpath) {
   $result = $xml->xpath($xpath);
   return (count($result) > 0) ? (string)reset($result) : null;
+}
+
+function _wrap_xml($string) {
+  return new SimpleXMLElement("<x>" . $string . "</x>");
 }
 
 ?>
