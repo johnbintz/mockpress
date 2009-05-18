@@ -191,6 +191,7 @@ function get_post_meta($post_id, $field, $single = false) {
 }
 
 function get_permalink($post) {
+  return $post->post_name;
 }
 
 function __($string, $namespace) {
