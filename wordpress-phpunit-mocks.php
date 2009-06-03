@@ -201,6 +201,7 @@ function post_exists($title, $content, $date) {
     }
   }
   return 0;
+}
 
 function get_permalink($post) {
   return $post->post_name;
