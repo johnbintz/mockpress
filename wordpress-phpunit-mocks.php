@@ -136,7 +136,7 @@ function wp_insert_post($array) {
   return $id;
 }
 
-function get_post($id) {
+function get_post($id, $output = "") {
   global $wp_test_expectations;
   
   if (isset($wp_test_expectations['posts'][$id])) {
@@ -189,11 +189,65 @@ function get_post_meta($post_id, $field, $single = false) {
   return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
 }
 
+function post_exists($title, $content, $date) {
+  global $wp_test_expectations;
+  foreach ($wp_test_expectations['posts'] as $post_id => $post) {
+    if (
+      ($post->post_title == $title) &&
+      ($post->post_date == $date)
+    ) {
+      return $post_id;
+    }
+  }
+  return 0;
+}
+
 function __($string, $namespace) {
   return $string;
 }
 
+function _e($string, $namespace) {
+  echo $string;
+}
+
+function plugin_basename($file) { return $file; }
+
+function get_theme($name) {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['themes'][$name])) {
+    return $wp_test_expectations['themes'][$name];
+  } else {
+    return null;
+  }
+}
+
+function get_current_theme() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current_theme'];
+}
+
+function _set_current_theme($theme) {
+  global $wp_test_expectations;
+  $wp_test_expectations['current_theme'] = $theme;
+}
+
 // For use with SimpleXML
+
+$_xml_cache = array();
+
+function _to_xml($string) {
+  global $_xml_cache;
+  
+  $key = md5($string);
+  if (!isset($_xml_cache[$key])) {
+    try {
+      $_xml_cache[$key] = new SimpleXMLElement("<x>" . $string . "</x>");
+    } catch (Exception $e) {
+      $_xml_cache[$key] = false;
+    }    
+  }
+  return $_xml_cache[$key];
+}
 
 function _node_exists($xml, $xpath) {
   return count($xml->xpath($xpath)) > 0;
