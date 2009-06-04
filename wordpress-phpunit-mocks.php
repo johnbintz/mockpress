@@ -254,6 +254,22 @@ function _to_xml($string) {
   return $_xml_cache[$key];
 }
 
+function _xpath_test($xml, $xpath, $value) {
+  if ($value === true) { $value = "~*exists*~"; }
+  if ($value === false) { $value = "~*not exists*~"; }
+  switch ($value) {
+    case "~*exists*~":
+      return _node_exists($xml, $xpath);
+      break; 
+    case "~*not exists*~":
+      return !(_node_exists($xml, $xpath));
+      break; 
+    default:
+      return _get_node_value($xml, $xpath) == $value;
+  }
+  return false;
+}
+
 function _node_exists($xml, $xpath) {
   $result = $xml->xpath($xpath);
   if (is_array($result)) {
