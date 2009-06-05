@@ -21,7 +21,10 @@ function _reset_wp() {
     'actions' => array(),
     'filters' => array(),
     'posts' => array(),
-    'post_meta' => array()
+    'post_meta' => array(),
+    'themes' => array(),
+    'plugin_domains' => array(),
+    'enqueued' => array()
   );
 }
 
@@ -151,6 +154,15 @@ function add_options_page($page_title, $menu_title, $access_level, $file, $funct
   add_submenu_page('options-general.php', $page_title, $menu_title, $access_level, $file, $function);
 }
 
+function add_menu_page($page_title, $menu_title, $access_level, $file, $function, $icon) {
+  global $wp_test_expectations;
+  $parent = "";
+  
+  $wp_test_expectations['pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function', 'icon');
+  
+  return "hook name";
+}
+
 function add_submenu_page($parent, $page_title, $menu_title, $access_level, $file, $function = "") {
   global $wp_test_expectations;
   
@@ -234,6 +246,21 @@ function get_current_theme() {
 function _set_current_theme($theme) {
   global $wp_test_expectations;
   $wp_test_expectations['current_theme'] = $theme;
+}
+
+function load_plugin_textdomain($domain, $path) {
+  global $wp_test_expectations;
+  $wp_test_expectations['plugin_domains'][] = "${domain}-${path}";
+}
+
+function wp_enqueue_script($script) {
+  global $wp_test_expectations;
+  $wp_test_expectations['enqueued'][$script] = true;
+}
+
+function _did_wp_enqueue_script($script) {
+  global $wp_test_expectations;
+  return isset($wp_test_expectations['enqueued'][$script]);
 }
 
 // For use with SimpleXML
