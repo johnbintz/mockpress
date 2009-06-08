@@ -283,6 +283,20 @@ function get_tags() {
   return $wp_test_expectations['all_tags'];
 }
 
+function _set_user_can_richedit($can) {
+  global $wp_test_expectations;
+  $wp_test_expectations['user_can_richedit'] = $can;
+}
+
+function user_can_richedit() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['user_can_richedit'];
+}
+
+function the_editor($content) {
+  echo $content;
+}
+
 // For use with SimpleXML
 
 $_xml_cache = array();
