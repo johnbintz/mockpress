@@ -263,6 +263,15 @@ function _did_wp_enqueue_script($script) {
   return isset($wp_test_expectations['enqueued'][$script]);
 }
 
+function _setup_query($string) {
+  $_SERVER['QUERY_STRING'] = $string;
+}
+
+function add_query_arg($parameter, $value) {
+  $separator = (strpos($_SERVER['QUERY_STRING'], "?") === false) ? "?" : "&";
+  return $_SERVER['QUERY_STRING'] . $separator . $parameter . "=" . urlencode($value);
+}
+
 // For use with SimpleXML
 
 $_xml_cache = array();
