@@ -24,7 +24,8 @@ function _reset_wp() {
     'post_meta' => array(),
     'themes' => array(),
     'plugin_domains' => array(),
-    'enqueued' => array()
+    'enqueued' => array(),
+    'all_tags' => array()
   );
 }
 
@@ -270,6 +271,16 @@ function _setup_query($string) {
 function add_query_arg($parameter, $value) {
   $separator = (strpos($_SERVER['QUERY_STRING'], "?") === false) ? "?" : "&";
   return $_SERVER['QUERY_STRING'] . $separator . $parameter . "=" . urlencode($value);
+}
+
+function _set_all_tags($tags) {
+  global $wp_test_expectations;
+  $wp_test_expectations['all_tags'] = $tags;
+}
+
+function get_tags() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['all_tags'];
 }
 
 // For use with SimpleXML
