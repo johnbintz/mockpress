@@ -1,4 +1,4 @@
-A series of mock functions to simulate WordPress in PHPUnit tests. Great for plugins!
+A series of mock functions to simulate WordPress for use with a unit testing framework.
 
 Copyright (c) 2009 John Bintz
 
