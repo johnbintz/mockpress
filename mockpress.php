@@ -25,7 +25,9 @@ function _reset_wp() {
     'themes' => array(),
     'plugin_domains' => array(),
     'enqueued' => array(),
-    'all_tags' => array()
+    'all_tags' => array(),
+    'sidebar_widgets' => array(),
+    'widget_controls' => array(),    
   );
 }
 
@@ -295,6 +297,19 @@ function user_can_richedit() {
 
 function the_editor($content) {
   echo $content;
+}
+
+function wp_register_sidebar_widget($id, $name, $output_callback, $options = array()) {
+  global $wp_test_expectations; 
+
+  $wp_test_expectations['sidebar_widgets'][] = compact('id', 'name', 'output_callback', 'options');
+}
+
+function register_widget_control($name, $control_callback, $width = '', $height = '') {
+  global $wp_test_expectations; 
+  $params = array_slice(func_get_args(), 4);
+
+  $wp_test_expectations['widget_controls'][] = compact('id', 'name', 'output_callback', 'options', 'params');
 }
 
 // For use with SimpleXML
