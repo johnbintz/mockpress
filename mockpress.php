@@ -301,14 +301,27 @@ function the_editor($content) {
 
 $_xml_cache = array();
 
-function _to_xml($string) {
+function _to_xml($string, $show_exception = false) {
   global $_xml_cache;
   
   $key = md5($string);
   if (!isset($_xml_cache[$key])) {
     try {
-      $_xml_cache[$key] = new SimpleXMLElement("<x>" . $string . "</x>");
+      $_xml_cache[$key] = new SimpleXMLElement("<x>" . str_replace(
+                                                         array("&mdash;"),
+                                                         array("--"),
+                                                         $string
+                                                       ) . "</x>");
     } catch (Exception $e) {
+      if ($show_exception) {
+        echo $e->getMessage() . "\n\n";
+        
+        $lines = explode("\n", $string);
+        for ($i = 0, $il = count($lines); $i < $il; ++$i) {
+          echo str_pad(($i + 1), strlen($il), " ", STR_PAD_LEFT) . "# " . $lines[$i] . "\n";
+        }
+        echo "\n";
+      }
       $_xml_cache[$key] = false;
     }    
   }
@@ -343,7 +356,7 @@ function _node_exists($xml, $xpath) {
 function _get_node_value($xml, $xpath) {
   $result = $xml->xpath($xpath);
   if (is_array($result)) {
-    return (count($result) > 0) ? (string)reset($result) : null;
+    return (count($result) > 0) ? trim((string)reset($result)) : null;
   } else {
     return false;
   }
