@@ -44,11 +44,16 @@ function get_option($key) {
                 
 function update_option($key, $value) {
   global $wp_test_expectations;
-  if ($wp_test_expectations['options'][$key] == $value) {
-    return false;
-  } else {
+  if (!isset($wp_test_expectations['options'][$key])) {
     $wp_test_expectations['options'][$key] = $value;
     return true;
+  } else {
+    if ($wp_test_expectations['options'][$key] == $value) {
+      return false;
+    } else {
+      $wp_test_expectations['options'][$key] = $value;
+      return true;
+    }
   }
 }
                                     
