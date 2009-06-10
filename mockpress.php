@@ -27,7 +27,8 @@ function _reset_wp() {
     'enqueued' => array(),
     'all_tags' => array(),
     'sidebar_widgets' => array(),
-    'widget_controls' => array(),    
+    'widget_controls' => array(),
+    'nonce' => array()
   );
 }
 
@@ -189,8 +190,45 @@ function add_filter($name, $callback) {
   $wp_test_expectations['filters'][$name] = $callback;
 }
 
+function _set_valid_nonce($name, $value) {
+  global $wp_test_expectations;
+  $wp_test_expectations['nonce'][$name] = $value;
+}
+
+function _get_nonce($name) {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['nonce'][$name])) {
+    return $wp_test_expectations['nonce'][$name];
+  } else {
+    return false;
+  }
+}
+
+function wp_create_nonce($name) {
+  global $wp_test_expectations;
+
+  if (!isset($wp_test_expectations['nonce'][$name])) {
+    $wp_test_expectations['nonce'][$name] = md5(rand());
+  }
+  return $wp_test_expectations['nonce'][$name];
+}
+
+function wp_verify_nonce($value, $name) {
+  global $wp_test_expectations;
+
+  if (isset($wp_test_expectations['nonce'][$name])) {
+    return $wp_test_expectations['nonce'][$name] == $value;
+  }
+  return false;
+}
+
 function wp_nonce_field($name) {
-  echo "<input type=\"hidden\" name=\"${name}\" value=\"" . md5(rand()) . "\" />";
+  global $wp_test_expectations;
+
+  if (!isset($wp_test_expectations['nonce'][$name])) {
+    $wp_test_expectations['nonce'][$name] = md5(rand());
+  }
+  echo "<input type=\"hidden\" name=\"${name}\" value=\"" . $wp_test_expectations['nonce'][$name] . "\" />";
 }
 
 function update_post_meta($post_id, $field, $value) {
