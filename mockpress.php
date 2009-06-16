@@ -97,15 +97,38 @@ function delete_option($key) {
     return false; 
   }
 }
-                    
+ 
+/** String Utility Functions **/
+
+/**
+ * Remove a trailing slash from a string if it exists.
+ * @param string $string The string to check for trailing slashes.
+ * @return string The string with a trailing slash removed, if necessary.
+ */
 function untrailingslashit($string) {
   return preg_replace('#/$#', '', $string);
 }
 
+/** Categories **/
+
+/**
+ * Add a category.
+ * @param int $id The category ID.
+ * @param object $object The category object.
+ * @throws Error if $id is not numeric or $category is not an object.
+ */
 function add_category($id, $object) {
   global $wp_test_expectations;
-  $object->cat_ID = $object->term_id = $id;
-  $wp_test_expectations['categories'][$id] = $object;
+  if (is_object($object)) {
+    if (is_numeric($id)) {
+      $object->cat_ID = $object->term_id = (int)$id;
+      $wp_test_expectations['categories'][$id] = $object;
+    } else {
+      trigger_error("ID must be numeric");
+    }
+  } else {
+    trigger_error("Category provided must be an object"); 
+  }
 }
     
 function get_category($id) {
