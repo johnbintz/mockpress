@@ -32,39 +32,69 @@ function _reset_wp() {
   );
 }
 
-/* WordPress Test Doubles */
+/*** WordPress Test Doubles ***/
 
+/** Options **/
+
+/**
+ * Get an option from the WP Options table.
+ * @param string $key The option to retrieve.
+ * @return string|boolean The value of the option, or false if the key doesn't exist.
+ */
 function get_option($key) {
   global $wp_test_expectations;
-  if (isset($wp_test_expectations['options'][$key])) {
-    return $wp_test_expectations['options'][$key];
+  if (is_string($key)) {
+    if (isset($wp_test_expectations['options'][$key])) {
+      return $wp_test_expectations['options'][$key];
+    } else {
+      return false;
+    }
   } else {
-    return false;
+    return false; 
   }
 }
-                
+
+/**
+ * Store an option in the WP Options table.
+ * @param string $key The option to store.
+ * @param string $value The value to store.
+ * @return boolean True if the option was updated, false otherwise.
+ */
 function update_option($key, $value) {
   global $wp_test_expectations;
-  if (!isset($wp_test_expectations['options'][$key])) {
-    $wp_test_expectations['options'][$key] = $value;
-    return true;
-  } else {
-    if ($wp_test_expectations['options'][$key] == $value) {
-      return false;
-    } else {
-      $wp_test_expectations['options'][$key] = $value;
+  if (is_string($key)) {
+    if (!isset($wp_test_expectations['options'][$key])) {
+      $wp_test_expectations['options'][$key] = (string)$value;
       return true;
+    } else {
+      if ($wp_test_expectations['options'][$key] == $value) {
+        return false;
+      } else {
+        $wp_test_expectations['options'][$key] = (string)$value;
+        return true;
+      }
     }
+  } else {
+    return false; 
   }
 }
                                     
+/**
+ * Delete an option from the WP Options table.
+ * @param string $key The option to delete.
+ * @return boolean True if the option was deleted.
+ */
 function delete_option($key) {
   global $wp_test_expectations;
-  if (isset($wp_test_expectations['options'][$key])) {
-    unset($wp_test_expectations['options'][$key]);
-    return true;
+  if (is_string($key)) {
+    if (isset($wp_test_expectations['options'][$key])) {
+      unset($wp_test_expectations['options'][$key]);
+      return true;
+    } else {
+      return false;
+    }
   } else {
-    return false;
+    return false; 
   }
 }
                     
