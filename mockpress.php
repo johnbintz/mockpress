@@ -273,6 +273,10 @@ function _e($string, $namespace) {
   echo $string;
 }
 
+function __ngettext($single, $plural, $number, $domain) {
+  return ($count == 1) ? $single : $plural;
+}
+
 function plugin_basename($file) { return $file; }
 
 function get_theme($name) {
