@@ -32,50 +32,103 @@ function _reset_wp() {
   );
 }
 
-/* WordPress Test Doubles */
+/*** WordPress Test Doubles ***/
 
+/** Options **/
+
+/**
+ * Get an option from the WP Options table.
+ * @param string $key The option to retrieve.
+ * @return string|boolean The value of the option, or false if the key doesn't exist.
+ */
 function get_option($key) {
   global $wp_test_expectations;
-  if (isset($wp_test_expectations['options'][$key])) {
-    return $wp_test_expectations['options'][$key];
+  if (is_string($key)) {
+    if (isset($wp_test_expectations['options'][$key])) {
+      return $wp_test_expectations['options'][$key];
+    } else {
+      return false;
+    }
   } else {
-    return false;
+    return false; 
   }
 }
-                
+
+/**
+ * Store an option in the WP Options table.
+ * @param string $key The option to store.
+ * @param string $value The value to store.
+ * @return boolean True if the option was updated, false otherwise.
+ */
 function update_option($key, $value) {
   global $wp_test_expectations;
-  if (!isset($wp_test_expectations['options'][$key])) {
-    $wp_test_expectations['options'][$key] = $value;
-    return true;
-  } else {
-    if ($wp_test_expectations['options'][$key] == $value) {
-      return false;
-    } else {
-      $wp_test_expectations['options'][$key] = $value;
+  if (is_string($key)) {
+    if (!isset($wp_test_expectations['options'][$key])) {
+      $wp_test_expectations['options'][$key] = (string)$value;
       return true;
+    } else {
+      if ($wp_test_expectations['options'][$key] == $value) {
+        return false;
+      } else {
+        $wp_test_expectations['options'][$key] = (string)$value;
+        return true;
+      }
     }
+  } else {
+    return false; 
   }
 }
                                     
+/**
+ * Delete an option from the WP Options table.
+ * @param string $key The option to delete.
+ * @return boolean True if the option was deleted.
+ */
 function delete_option($key) {
   global $wp_test_expectations;
-  if (isset($wp_test_expectations['options'][$key])) {
-    unset($wp_test_expectations['options'][$key]);
-    return true;
+  if (is_string($key)) {
+    if (isset($wp_test_expectations['options'][$key])) {
+      unset($wp_test_expectations['options'][$key]);
+      return true;
+    } else {
+      return false;
+    }
   } else {
-    return false;
+    return false; 
   }
 }
-                    
+ 
+/** String Utility Functions **/
+
+/**
+ * Remove a trailing slash from a string if it exists.
+ * @param string $string The string to check for trailing slashes.
+ * @return string The string with a trailing slash removed, if necessary.
+ */
 function untrailingslashit($string) {
   return preg_replace('#/$#', '', $string);
 }
 
+/** Categories **/
+
+/**
+ * Add a category.
+ * @param int $id The category ID.
+ * @param object $object The category object.
+ * @throws Error if $id is not numeric or $category is not an object.
+ */
 function add_category($id, $object) {
   global $wp_test_expectations;
-  $object->cat_ID = $object->term_id = $id;
-  $wp_test_expectations['categories'][$id] = $object;
+  if (is_object($object)) {
+    if (is_numeric($id)) {
+      $object->cat_ID = $object->term_id = (int)$id;
+      $wp_test_expectations['categories'][$id] = $object;
+    } else {
+      trigger_error("ID must be numeric");
+    }
+  } else {
+    trigger_error("Category provided must be an object"); 
+  }
 }
     
 function get_category($id) {
