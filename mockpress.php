@@ -134,7 +134,7 @@ function add_category($id, $object) {
 function get_category($id) {
   global $wp_test_expectations;
   if (!isset($wp_test_expectations['categories'])) {
-    return null;
+    return new WP_Error();
   } else {
     return $wp_test_expectations['categories'][$id];
   }
@@ -143,6 +143,21 @@ function get_category($id) {
 function get_all_category_ids() {
   global $wp_test_expectations;
   return array_keys($wp_test_expectations['categories']);
+}
+
+/**
+ * Get the permalink to a category.
+ * For MockPress's purposes, the link will look like "/category/${category_id}"
+ * @param int $category_id The category ID.
+ * @return string|WP_Error The URI or a WP_Error object upon failure.
+ */
+function get_category_link($category_id) {
+  global $wp_test_expectations;
+	if (isset($wp_test_expectations['categories'][$category_id])) {
+		return "/category/${category_id}";
+  } else {
+		return new WP_Error();
+	}
 }
 
 function get_gmt_from_date($date_string) {
@@ -414,6 +429,14 @@ function register_widget_control($name, $control_callback, $width = '', $height 
   $params = array_slice(func_get_args(), 4);
 
   $wp_test_expectations['widget_controls'][] = compact('id', 'name', 'output_callback', 'options', 'params');
+}
+
+/** WP_Error class **/
+
+class WP_Error {}
+
+function is_wp_error($object) {
+	return (is_a($object, "WP_Error"));
 }
 
 // For use with SimpleXML
