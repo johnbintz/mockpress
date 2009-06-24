@@ -45,7 +45,7 @@ function get_option($key) {
   global $wp_test_expectations;
   if (is_string($key)) {
     if (isset($wp_test_expectations['options'][$key])) {
-      return $wp_test_expectations['options'][$key];
+      return maybe_unserialize($wp_test_expectations['options'][$key]);
     } else {
       return false;
     }
@@ -62,15 +62,16 @@ function get_option($key) {
  */
 function update_option($key, $value) {
   global $wp_test_expectations;
+  $value = maybe_serialize($value);
   if (is_string($key)) {
     if (!isset($wp_test_expectations['options'][$key])) {
-      $wp_test_expectations['options'][$key] = (string)$value;
+      $wp_test_expectations['options'][$key] = $value;
       return true;
     } else {
       if ($wp_test_expectations['options'][$key] == $value) {
         return false;
       } else {
-        $wp_test_expectations['options'][$key] = (string)$value;
+        $wp_test_expectations['options'][$key] = $value;
         return true;
       }
     }
@@ -429,6 +430,25 @@ function register_widget_control($name, $control_callback, $width = '', $height 
   $params = array_slice(func_get_args(), 4);
 
   $wp_test_expectations['widget_controls'][] = compact('id', 'name', 'output_callback', 'options', 'params');
+}
+
+function is_serialized($data) {
+  return (@unserialize($data) !== false);
+}
+
+function maybe_serialize($data) {
+  if (is_array($data) || is_object($data) || is_serialized($data)) {
+    return serialize($data);
+  } else {
+    return $data;
+  }
+}
+
+function maybe_unserialize($data) {
+  if (is_serialized($data)) {
+    if (($gm = unserialize($data)) !== false) { return $gm; }
+  }
+  return $data; 
 }
 
 /** WP_Error class **/
