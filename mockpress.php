@@ -456,6 +456,22 @@ function maybe_unserialize($data) {
 
 class WP_Error {}
 
+/** WP_Widget class **/
+
+class WP_Widget {
+  function WP_Widget($id, $name, $widget_options, $control_options) {
+    global $wp_test_expectations;
+    $wp_test_expectations['wp_widgets'][$id] = compact('id', 'name', 'widget_options', 'widget_controls');
+    $this->id = $id;
+  }
+  function widget($args, $instance) {}
+  function update($new_instance, $old_instance) {}
+  function form($instance) {}
+  
+  function get_field_id($field_name) { return "$id-$field_name"; }
+  function get_field_name($field_name) { return "$id[$field_name]"; }
+}
+
 function is_wp_error($object) {
   return (is_a($object, "WP_Error"));
 }
