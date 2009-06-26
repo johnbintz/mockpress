@@ -11,8 +11,8 @@ $wp_test_expectations = array();
  * Reset the WordPress test expectations.
  */
 function _reset_wp() {
-	global $wp_test_expectations;
-	$wp_test_expectations = array(
+  global $wp_test_expectations;
+  $wp_test_expectations = array(
     'options' => array(),
     'categories' => array(),
     'post_categories' => array(),
@@ -28,7 +28,8 @@ function _reset_wp() {
     'all_tags' => array(),
     'sidebar_widgets' => array(),
     'widget_controls' => array(),
-    'nonce' => array()
+    'nonce' => array(),
+    'wp_widgets' => array()
   );
 }
 
@@ -154,11 +155,11 @@ function get_all_category_ids() {
  */
 function get_category_link($category_id) {
   global $wp_test_expectations;
-	if (isset($wp_test_expectations['categories'][$category_id])) {
-		return "/category/${category_id}";
+  if (isset($wp_test_expectations['categories'][$category_id])) {
+    return "/category/${category_id}";
   } else {
-		return new WP_Error();
-	}
+    return new WP_Error();
+  }
 }
 
 function get_gmt_from_date($date_string) {
@@ -456,7 +457,7 @@ function maybe_unserialize($data) {
 class WP_Error {}
 
 function is_wp_error($object) {
-	return (is_a($object, "WP_Error"));
+  return (is_a($object, "WP_Error"));
 }
 
 // For use with SimpleXML
