@@ -29,7 +29,11 @@ function _reset_wp() {
     'sidebar_widgets' => array(),
     'widget_controls' => array(),
     'nonce' => array(),
-    'wp_widgets' => array()
+    'wp_widgets' => array(),
+    'current' => array(
+      'is_feed' => false
+    ),
+    'plugin_data' => array(),
   );
 }
 
@@ -450,6 +454,21 @@ function maybe_unserialize($data) {
     if (($gm = unserialize($data)) !== false) { return $gm; }
   }
   return $data; 
+}
+
+function is_feed() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current']['is_feed'];
+}
+
+function _set_current_option($field, $value) {
+  global $wp_test_expectations;
+  $wp_test_expectations['current'][$field] = $value;
+}
+
+function get_plugin_data($filepath) {
+  global $wp_test_expectations;
+  return $wp_test_expectations['plugin_data'][$filepath];
 }
 
 /** WP_Error class **/
