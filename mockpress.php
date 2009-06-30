@@ -506,8 +506,8 @@ function _to_xml($string, $show_exception = false) {
   if (!isset($_xml_cache[$key])) {
     try {
       $_xml_cache[$key] = new SimpleXMLElement("<x>" . str_replace(
-                                                         array("&mdash;"),
-                                                         array("--"),
+                                                         array("&mdash;", "&nbsp;"),
+                                                         array("--", " "),
                                                          $string
                                                        ) . "</x>");
     } catch (Exception $e) {
