@@ -461,6 +461,11 @@ function is_feed() {
   return $wp_test_expectations['current']['is_feed'];
 }
 
+function is_admin() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current']['is_admin'];
+}
+
 function _set_current_option($field, $value) {
   global $wp_test_expectations;
   $wp_test_expectations['current'][$field] = $value;
