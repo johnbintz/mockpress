@@ -479,6 +479,11 @@ function is_feed() {
   return $wp_test_expectations['current']['is_feed'];
 }
 
+function is_admin() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current']['is_admin'];
+}
+
 function _set_current_option($field, $value) {
   global $wp_test_expectations;
   $wp_test_expectations['current'][$field] = $value;
@@ -631,8 +636,8 @@ function _to_xml($string, $show_exception = false) {
   if (!isset($_xml_cache[$key])) {
     try {
       $_xml_cache[$key] = new SimpleXMLElement("<x>" . str_replace(
-                                                         array("&mdash;"),
-                                                         array("--"),
+                                                         array("&mdash;", "&nbsp;"),
+                                                         array("--", " "),
                                                          $string
                                                        ) . "</x>");
     } catch (Exception $e) {
