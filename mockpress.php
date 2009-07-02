@@ -34,6 +34,9 @@ function _reset_wp() {
       'is_feed' => false
     ),
     'plugin_data' => array(),
+    'theme' => array(
+      'posts' => array()    
+    )
   );
 }
 
@@ -164,6 +167,21 @@ function get_category_link($category_id) {
   } else {
     return new WP_Error();
   }
+}
+
+function wp_get_post_tags($post_id) {
+  global $wp_test_expectations;
+  if (!isset($wp_test_expectations['post_tags'][$post_id])) {
+    return array();
+  } else {
+    return $wp_test_expectations['post_tags'][$post_id];
+  }  
+}
+
+function wp_set_post_tags($post_id, $tags) {
+  global $wp_test_expectations;
+  if (!is_array($tags)) { $categories = array($tags); }
+  $wp_test_expectations['post_tags'][$post_id] = $tags;
 }
 
 function get_gmt_from_date($date_string) {
@@ -469,6 +487,113 @@ function _set_current_option($field, $value) {
 function get_plugin_data($filepath) {
   global $wp_test_expectations;
   return $wp_test_expectations['plugin_data'][$filepath];
+}
+
+/** Theme Stuff **/
+
+function _set_theme_expectation($which, $value) {
+  global $wp_test_expectations;
+  $wp_test_expectations['theme'][$which] = $value; 
+}
+
+function _add_theme_post($post) {
+  global $wp_test_expectations;
+  $wp_test_expectations['theme']['posts'][] = $post;
+}
+
+function get_header() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['theme']['header']; 
+}
+
+function get_sidebar() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['theme']['sidebar']; 
+}
+
+function get_footer() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['theme']['footer']; 
+}
+
+function have_posts() {
+  global $wp_test_expectations;
+  return is_array($wp_test_expectations['theme']['posts']) && !empty($wp_test_expectations['theme']['posts']);
+}
+
+function the_post() {
+  global $wp_test_expectations, $post;
+  if (is_array($wp_test_expectations['theme']['posts']) && !empty($wp_test_expectations['theme']['posts'])) {
+    $post = array_shift($wp_test_expectations['theme']['posts']);
+  }
+}
+
+function the_ID() {
+  global $post;
+  echo $post->ID; 
+}
+
+function the_permalink() {
+  global $post;
+  echo $post->guid; 
+}
+
+function the_title() {
+  global $post;
+  echo $post->post_title; 
+}
+
+function the_title_attribute() {
+  global $post;
+  echo htmlentities($post->post_title);
+}
+
+function the_time($format) {
+  global $post;
+  echo date($format, $post->post_date);
+}
+
+function the_author() {
+  global $post;
+  echo $post->post_author;
+}
+
+function the_content($more_link_text) {
+  global $post;
+  echo $post->post_content;
+  
+  if (strpos($post->post_content, "<!--more") !== false) {
+    echo $more_link_text;
+  }
+}
+
+function the_tags($start, $separator, $finish) {
+  global $post;
+  
+  $tag_output = array();
+  foreach (wp_get_post_tags($post->ID) as $tag) {
+    $tag_output = '<a href="' . $tag->slug . '">' . $tag->name . '</a>';
+  }
+  
+  echo $start . implode($separator, $tag_output) . $finish;
+}
+
+function the_category($separator) {
+  global $post;
+  
+  $category_output = array();
+  foreach (wp_get_post_tags($post->ID) as $category) {
+    $category_output = '<a href="' . $category->slug . '">' . $category->name . '</a>';
+  }
+  
+  echo implode($separator, $category_output);
+}
+
+function next_posts_link($link_text) {
+  global $wp_test_expectations;
+  if ($wp_test_expectations['theme']['has_next_posts']) {
+    echo '<a href="#mockpress:next">' . $link_text . '</a>'
+  }
 }
 
 /** WP_Error class **/
