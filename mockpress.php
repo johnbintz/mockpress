@@ -597,7 +597,7 @@ function the_category($separator) {
 function next_posts_link($link_text) {
   global $wp_test_expectations;
   if ($wp_test_expectations['theme']['has_next_posts']) {
-    echo '<a href="#mockpress:next">' . $link_text . '</a>'
+    echo '<a href="#mockpress:next">' . $link_text . '</a>';
   }
 }
 
