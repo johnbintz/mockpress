@@ -37,7 +37,9 @@ function _reset_wp() {
     'theme' => array(
       'posts' => array()    
     ),
-    'bloginfo' => array()
+    'bloginfo' => array(),
+    'user_capabilities' => array(),
+    'children' => array()
   );
 }
 
@@ -107,8 +109,6 @@ function delete_option($key) {
     return false; 
   }
 }
- 
- 
  
 /** String Utility Functions **/
 
@@ -380,6 +380,11 @@ function get_posts($query) {
   }
 }
 
+/**
+ * Insert a post into the database.
+ * @param array $post The post information.
+ * @return int The post ID.
+ */
 function wp_insert_post($array) {
   global $wp_test_expectations;
 
@@ -398,6 +403,12 @@ function wp_insert_post($array) {
   return $id;
 }
 
+/**
+ * Get a post from the database.
+ * @param int $id The post to retrieve.
+ * @param string $output
+ * @return object|null The post or null if not found.
+ */
 function get_post($id, $output = "") {
   global $wp_test_expectations;
   
@@ -439,7 +450,18 @@ function post_exists($title, $content, $date) {
 }
 
 function get_permalink($post) {
-  return $post->post_name;
+  return $post->guid;
+}
+
+function _set_get_children($options, $children) {
+  global $wp_test_expectations;
+  $wp_test_expectations['children'][md5(serialize($options))] = $children;
+}
+
+function get_children($options) {
+  global $wp_test_expectations;
+  var_dump(md5(serialize($options)));
+  return $wp_test_expectations['children'][md5(serialize($options))];
 }
 
 /** Core **/
@@ -585,6 +607,22 @@ function add_query_arg($parameter, $value) {
   return $_SERVER['QUERY_STRING'] . $separator . $parameter . "=" . urlencode($value);
 }
 
+function get_search_query() {
+  $parts = explode("&", preg_replace("#^.*\?#", "", $_SERVER['QUERY_STRING']));
+  foreach ($parts as $part) {
+    list($param, $value) = explode("=", $part);
+    if ($param == "s") {
+      return $value; 
+    }
+  }
+  
+  return "";
+}
+
+function the_search_query() {
+  echo get_search_query(); 
+}
+
 /** Pre-2.8 Widgets **/
 
 function wp_register_sidebar_widget($id, $name, $output_callback, $options = array()) {
@@ -698,7 +736,11 @@ function the_author() {
   echo $post->post_author;
 }
 
-function the_content($more_link_text) {
+/**
+ * Print the content of the post.
+ * @param string $more_link_text If the content is multi-page, the text for the next page link.
+ */
+function the_content($more_link_text = "") {
   global $post;
   echo $post->post_content;
   
@@ -707,6 +749,12 @@ function the_content($more_link_text) {
   }
 }
 
+/**
+ * Print the tags for the post.
+ * @param string $start The prefix to the tag listing.
+ * @param string $separator The string between each tag.
+ * @param string $finish The suffix to the tag listing.
+ */
 function the_tags($start, $separator, $finish) {
   global $post;
   
@@ -718,6 +766,11 @@ function the_tags($start, $separator, $finish) {
   echo $start . implode($separator, $tag_output) . $finish;
 }
 
+
+/**
+ * Print the categories for the post.
+ * @param string $separator The string between each category.
+ */
 function the_category($separator) {
   global $post;
   
@@ -729,6 +782,10 @@ function the_category($separator) {
   echo implode($separator, $category_output);
 }
 
+/**
+ * If there are more posts, print a link that links to the subsequent posts.
+ * @param string $link_test The text for the link.
+ */
 function next_posts_link($link_text) {
   global $wp_test_expectations;
   if ($wp_test_expectations['theme']['has_next_posts']) {
@@ -736,6 +793,10 @@ function next_posts_link($link_text) {
   }
 }
 
+/**
+ * Get the theme's root directory.
+ * @return string The template directory.
+ */
 function get_template_directory() {
   global $wp_test_expectations;
   return $wp_test_expectations['theme']['template_directory'];  
@@ -754,6 +815,39 @@ function get_bloginfo($field, $display) {
   global $wp_test_expectations;
   return $wp_test_expectations['bloginfo'][$field];
 }
+
+/** Media **/
+
+function wp_get_attachment_image($id, $size = 'thumbnail', $icon = false) {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['posts'][$id])) {
+    return '<img src="' . $wp_test_expectations['posts'][$id]->guid . '" />';
+  }
+}
+
+/** User roles **/
+
+function _set_user_capabilities() {
+  global $wp_test_expectations;
+  
+  $capabilities = func_get_args(); 
+  foreach ($capabilities as $capability) {
+    $wp_test_expectations['user_capabilities'][$capability] = true;
+  }
+}
+
+function current_user_can() {
+  global $wp_test_expectations;
+  
+  $capabilities = func_get_args(); 
+  $all_valid = true;
+  foreach ($capabilities as $capability) {
+    if (!$wp_test_expectations['user_capabilities'][$capability]) { $all_valid = false; break; }
+  }
+  return $all_valid;
+}
+
+function edit_post_link() {}
 
 /** WP_Error class **/
 
