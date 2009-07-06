@@ -36,7 +36,8 @@ function _reset_wp() {
     'plugin_data' => array(),
     'theme' => array(
       'posts' => array()    
-    )
+    ),
+    'bloginfo' => array()
   );
 }
 
@@ -107,6 +108,8 @@ function delete_option($key) {
   }
 }
  
+ 
+ 
 /** String Utility Functions **/
 
 /**
@@ -116,6 +119,94 @@ function delete_option($key) {
  */
 function untrailingslashit($string) {
   return preg_replace('#/$#', '', $string);
+}
+
+/**
+ * Get GMT string from date string.
+ * Currently does nothing.
+ * @param string $date_string The date string to convert.
+ * @return string The converted date string in GMT.
+ */
+function get_gmt_from_date($date_string) {
+  return $date_string;
+}
+
+/**
+ * Return a string that's been internationalized.
+ * @param string $string The string to check for i18n.
+ * @param string $namespace The namespace to check.
+ * @return string The i18n string.
+ */
+function __($string, $namespace = 'default') {
+  return $string;
+}
+
+/**
+ * Echo an internationalized string.
+ * @param string $string The string to check for i18n.
+ * @param string $namespace The namespace to check.
+ */ 
+function _e($string, $namespace = 'default') {
+  echo __($string, $namespace);
+}
+
+/**
+ * Return a different string if the number of items is 1.
+ * @deprecated Is now _n in WordPress 2.8.
+ * @param string $single The string to return if only one item.
+ * @param string $plural The string to return if not one item.
+ * @param string $number The number of items.
+ * @param string $domain The text domain.
+ * @return string The correct string.
+ */
+function __ngettext($single, $plural, $number, $domain) {
+  return _n($single, $plural, $number, $domain);
+}
+
+/**
+ * Return a different string if the number of items is 1.
+ * @param $single The string to return if only one item.
+ * @param $plural The string to return if not one item.
+ * @param $number The number of items.
+ * @param $domain The text domain.
+ * @return string The correct string.
+ */
+function _n($single, $plural, $number, $domain) {
+  return ($number == 1) ? $single : $plural;  
+}
+
+/**
+ * True if the data provided was created by serialize()
+ * @param mixed $data The data to check.
+ * @return boolean True if the data was created by serialize.
+ */
+function is_serialized($data) {
+  return (@unserialize($data) !== false);
+}
+
+/**
+ * Try to serialize the data and return the serialized string.
+ * @param mixed $data The data to try to serialize.
+ * @return mixed The data, possibly serialized.
+ */
+function maybe_serialize($data) {
+  if (is_array($data) || is_object($data) || is_serialized($data)) {
+    return serialize($data);
+  } else {
+    return $data;
+  }
+}
+
+/**
+ * Try to unserialize the data and return the serialized data.
+ * @param mixed $data The data to try to unserialize.
+ * @return mixed The data, possibly unserialized.
+ */
+function maybe_unserialize($data) {
+  if (is_serialized($data)) {
+    if (($gm = unserialize($data)) !== false) { return $gm; }
+  }
+  return $data; 
 }
 
 /** Categories **/
@@ -139,7 +230,12 @@ function add_category($id, $object) {
     trigger_error("Category provided must be an object"); 
   }
 }
-    
+
+/**
+ * Get a category.
+ * @param int $id The category ID to retrieve.
+ * @return object|WP_Error The category object, or a WP_Error object on failure.
+ */
 function get_category($id) {
   global $wp_test_expectations;
   if (!isset($wp_test_expectations['categories'])) {
@@ -148,10 +244,53 @@ function get_category($id) {
     return $wp_test_expectations['categories'][$id];
   }
 }
-        
+
+/**
+ * Get all category IDs.
+ * @return array All valid category IDs.
+ */
 function get_all_category_ids() {
   global $wp_test_expectations;
   return array_keys($wp_test_expectations['categories']);
+}
+
+/**
+ * Get a category's name.
+ * @param int $id The id of the category.
+ * @return string|null The name, or null if the category is not found.
+ */
+function get_cat_name($id) {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['categories'][$id])) {  
+    return $wp_test_expectations['categories'][$id]->name;
+  } else {
+    return null; 
+  }
+}
+   
+/**
+ * Set a post's categories.
+ * @param int $post_id The post to modify.
+ * @param array $categories The categories to set for this post.
+ */
+function wp_set_post_categories($post_id, $categories) {
+  global $wp_test_expectations;
+  if (!is_array($categories)) { $categories = array($categories); }
+  $wp_test_expectations['post_categories'][$post_id] = $categories;
+}
+
+/**
+ * Get a post's categories.
+ * @param int $post_id The post to query.
+ * @return array The categories for this post.
+ */
+function wp_get_post_categories($post_id) {
+  global $wp_test_expectations;
+  if (!isset($wp_test_expectations['post_categories'][$post_id])) {
+    return array();
+  } else {
+    return $wp_test_expectations['post_categories'][$post_id];
+  }
 }
 
 /**
@@ -169,6 +308,13 @@ function get_category_link($category_id) {
   }
 }
 
+/** Tags **/
+
+/**
+ * Get a post's tags.
+ * @param int $post_id The post to query.
+ * @return array The tags for the post.
+ */
 function wp_get_post_tags($post_id) {
   global $wp_test_expectations;
   if (!isset($wp_test_expectations['post_tags'][$post_id])) {
@@ -178,41 +324,52 @@ function wp_get_post_tags($post_id) {
   }  
 }
 
+/**
+ * Set a post's tags.
+ * @param int $post_id The post to modify.
+ * @param array $tags The tags to set for this post.
+ */
 function wp_set_post_tags($post_id, $tags) {
   global $wp_test_expectations;
   if (!is_array($tags)) { $categories = array($tags); }
   $wp_test_expectations['post_tags'][$post_id] = $tags;
 }
 
-function get_gmt_from_date($date_string) {
-  return $date_string;
-}
-  
-function get_cat_name($id) {
+/**
+ * Set the output for get_tags()
+ * @param array $tags The output for get_tags()
+ */
+function _set_all_tags($tags) {
   global $wp_test_expectations;
-  return $wp_test_expectations['categories'][$id]->name;
-}
-                  
-function wp_set_post_categories($post_id, $categories) {
-  global $wp_test_expectations;
-  if (!is_array($categories)) { $categories = array($categories); }
-  $wp_test_expectations['post_categories'][$post_id] = $categories;
+  $wp_test_expectations['all_tags'] = $tags;
 }
 
-function wp_get_post_categories($post_id) {
+/**
+ * Get all tags within WordPress.
+ * @return array All the tags within WordPress.
+ */
+function get_tags() {
   global $wp_test_expectations;
-  if (!isset($wp_test_expectations['post_categories'][$post_id])) {
-    return array();
-  } else {
-    return $wp_test_expectations['post_categories'][$post_id];
-  }
+  return $wp_test_expectations['all_tags'];
 }
 
+/** Posts **/
+
+/**
+ * Set the respone for get_posts()
+ * @param $query The query to expect.
+ * @param $result The posts to return for this query.
+ */
 function _set_up_get_posts_response($query, $result) {
   global $wp_test_expectations;
   $wp_test_expectations['get_posts'][$query] = $result;
 }
 
+/**
+ * Retrieve posts from the WordPress database.
+ * @param string $query The query to use against the database.
+ * @return array The posts that match the query.
+ */
 function get_posts($query) {
   global $wp_test_expectations;
   
@@ -251,6 +408,54 @@ function get_post($id, $output = "") {
   }
 }
 
+function update_post_meta($post_id, $field, $value) {
+  global $wp_test_expectations;
+  if (!isset($wp_test_expectations['post_meta'][$post_id])) {
+    $wp_test_expectations['post_meta'][$post_id] = array();
+  }
+  $wp_test_expectations['post_meta'][$post_id][$field] = $value;
+}
+
+function get_post_meta($post_id, $field, $single = false) {
+  global $wp_test_expectations;
+
+  if (!isset($wp_test_expectations['post_meta'][$post_id])) { return ""; }
+  if (!isset($wp_test_expectations['post_meta'][$post_id][$field])) { return ""; }
+  
+  return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
+}
+
+function post_exists($title, $content, $date) {
+  global $wp_test_expectations;
+  foreach ($wp_test_expectations['posts'] as $post_id => $post) {
+    if (
+      ($post->post_title == $title) &&
+      ($post->post_date == $date)
+    ) {
+      return $post_id;
+    }
+  }
+  return 0;
+}
+
+function get_permalink($post) {
+  return $post->post_name;
+}
+
+/** Core **/
+
+function add_action($name, $callback) {
+  global $wp_test_expectations;
+  $wp_test_expectations['actions'][$name] = $callback;
+}
+
+function add_filter($name, $callback) {
+  global $wp_test_expectations;
+  $wp_test_expectations['filters'][$name] = $callback;
+}
+
+/** Admin **/
+
 function add_options_page($page_title, $menu_title, $access_level, $file, $function = "") {
   add_submenu_page('options-general.php', $page_title, $menu_title, $access_level, $file, $function);
 }
@@ -272,15 +477,40 @@ function add_submenu_page($parent, $page_title, $menu_title, $access_level, $fil
   return "hook name";
 }
 
-function add_action($name, $callback) {
+function _set_user_can_richedit($can) {
   global $wp_test_expectations;
-  $wp_test_expectations['actions'][$name] = $callback;
+  $wp_test_expectations['user_can_richedit'] = $can;
 }
 
-function add_filter($name, $callback) {
+function user_can_richedit() {
   global $wp_test_expectations;
-  $wp_test_expectations['filters'][$name] = $callback;
+  return $wp_test_expectations['user_can_richedit'];
 }
+
+function the_editor($content) {
+  echo $content;
+}
+
+/** Plugin **/
+
+function plugin_basename($file) { return $file; }
+
+function load_plugin_textdomain($domain, $path) {
+  global $wp_test_expectations;
+  $wp_test_expectations['plugin_domains'][] = "${domain}-${path}";
+}
+
+function wp_enqueue_script($script) {
+  global $wp_test_expectations;
+  $wp_test_expectations['enqueued'][$script] = true;
+}
+
+function _did_wp_enqueue_script($script) {
+  global $wp_test_expectations;
+  return isset($wp_test_expectations['enqueued'][$script]);
+}
+
+/** Nonce **/
 
 function _set_valid_nonce($name, $value) {
   global $wp_test_expectations;
@@ -323,53 +553,7 @@ function wp_nonce_field($name) {
   echo "<input type=\"hidden\" name=\"${name}\" value=\"" . $wp_test_expectations['nonce'][$name] . "\" />";
 }
 
-function update_post_meta($post_id, $field, $value) {
-  global $wp_test_expectations;
-  if (!isset($wp_test_expectations['post_meta'][$post_id])) {
-    $wp_test_expectations['post_meta'][$post_id] = array();
-  }
-  $wp_test_expectations['post_meta'][$post_id][$field] = $value;
-}
-
-function get_post_meta($post_id, $field, $single = false) {
-  global $wp_test_expectations;
-
-  if (!isset($wp_test_expectations['post_meta'][$post_id])) { return ""; }
-  if (!isset($wp_test_expectations['post_meta'][$post_id][$field])) { return ""; }
-  
-  return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
-}
-
-function post_exists($title, $content, $date) {
-  global $wp_test_expectations;
-  foreach ($wp_test_expectations['posts'] as $post_id => $post) {
-    if (
-      ($post->post_title == $title) &&
-      ($post->post_date == $date)
-    ) {
-      return $post_id;
-    }
-  }
-  return 0;
-}
-
-function get_permalink($post) {
-  return $post->post_name;
-}
-
-function __($string, $namespace) {
-  return $string;
-}
-
-function _e($string, $namespace) {
-  echo $string;
-}
-
-function __ngettext($single, $plural, $number, $domain) {
-  return ($count == 1) ? $single : $plural;
-}
-
-function plugin_basename($file) { return $file; }
+/** Theme **/
 
 function get_theme($name) {
   global $wp_test_expectations;
@@ -390,20 +574,7 @@ function _set_current_theme($theme) {
   $wp_test_expectations['current_theme'] = $theme;
 }
 
-function load_plugin_textdomain($domain, $path) {
-  global $wp_test_expectations;
-  $wp_test_expectations['plugin_domains'][] = "${domain}-${path}";
-}
-
-function wp_enqueue_script($script) {
-  global $wp_test_expectations;
-  $wp_test_expectations['enqueued'][$script] = true;
-}
-
-function _did_wp_enqueue_script($script) {
-  global $wp_test_expectations;
-  return isset($wp_test_expectations['enqueued'][$script]);
-}
+/** Query **/
 
 function _setup_query($string) {
   $_SERVER['QUERY_STRING'] = $string;
@@ -414,29 +585,7 @@ function add_query_arg($parameter, $value) {
   return $_SERVER['QUERY_STRING'] . $separator . $parameter . "=" . urlencode($value);
 }
 
-function _set_all_tags($tags) {
-  global $wp_test_expectations;
-  $wp_test_expectations['all_tags'] = $tags;
-}
-
-function get_tags() {
-  global $wp_test_expectations;
-  return $wp_test_expectations['all_tags'];
-}
-
-function _set_user_can_richedit($can) {
-  global $wp_test_expectations;
-  $wp_test_expectations['user_can_richedit'] = $can;
-}
-
-function user_can_richedit() {
-  global $wp_test_expectations;
-  return $wp_test_expectations['user_can_richedit'];
-}
-
-function the_editor($content) {
-  echo $content;
-}
+/** Pre-2.8 Widgets **/
 
 function wp_register_sidebar_widget($id, $name, $output_callback, $options = array()) {
   register_sidebar_widget($id, $name, $output_callback, $options);
@@ -455,23 +604,16 @@ function register_widget_control($name, $control_callback, $width = '', $height 
   $wp_test_expectations['widget_controls'][] = compact('id', 'name', 'output_callback', 'options', 'params');
 }
 
-function is_serialized($data) {
-  return (@unserialize($data) !== false);
+/** Template Tags and Theme Testing **/
+
+function _set_theme_expectation($which, $value) {
+  global $wp_test_expectations;
+  $wp_test_expectations['theme'][$which] = $value; 
 }
 
-function maybe_serialize($data) {
-  if (is_array($data) || is_object($data) || is_serialized($data)) {
-    return serialize($data);
-  } else {
-    return $data;
-  }
-}
-
-function maybe_unserialize($data) {
-  if (is_serialized($data)) {
-    if (($gm = unserialize($data)) !== false) { return $gm; }
-  }
-  return $data; 
+function _set_template_directory($dir) {
+  global $wp_test_expectations;
+  $wp_test_expectations['theme']['template_directory'] = $dir; 
 }
 
 function is_feed() {
@@ -492,13 +634,6 @@ function _set_current_option($field, $value) {
 function get_plugin_data($filepath) {
   global $wp_test_expectations;
   return $wp_test_expectations['plugin_data'][$filepath];
-}
-
-/** Theme Stuff **/
-
-function _set_theme_expectation($which, $value) {
-  global $wp_test_expectations;
-  $wp_test_expectations['theme'][$which] = $value; 
 }
 
 function _add_theme_post($post) {
@@ -599,6 +734,25 @@ function next_posts_link($link_text) {
   if ($wp_test_expectations['theme']['has_next_posts']) {
     echo '<a href="#mockpress:next">' . $link_text . '</a>';
   }
+}
+
+function get_template_directory() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['theme']['template_directory'];  
+}
+
+function _set_bloginfo($field, $value) {
+  global $wp_test_expectations;
+  $wp_test_expectations['bloginfo'][$field] = $value;  
+}
+
+function bloginfo($field) {
+  echo get_bloginfo($field, 'display');
+}
+
+function get_bloginfo($field, $display) {
+  global $wp_test_expectations;
+  return $wp_test_expectations['bloginfo'][$field];
 }
 
 /** WP_Error class **/
