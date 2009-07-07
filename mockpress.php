@@ -802,15 +802,30 @@ function get_template_directory() {
   return $wp_test_expectations['theme']['template_directory'];  
 }
 
+/**
+ * Set a bloginfo() field.
+ * @param string $field The field to set.
+ * @param string $value The value that the bloginfo() call should return.
+ */
 function _set_bloginfo($field, $value) {
   global $wp_test_expectations;
   $wp_test_expectations['bloginfo'][$field] = $value;  
 }
 
+/**
+ * Echo a bloginfo value.
+ * @param string $field The field to return.
+ */
 function bloginfo($field) {
   echo get_bloginfo($field, 'display');
 }
 
+/**
+ * Get a bloginfo value.
+ * @param string $field The field to return.
+ * @param string $display The display method.
+ * @return string The bloginfo field value.
+ */
 function get_bloginfo($field, $display) {
   global $wp_test_expectations;
   return $wp_test_expectations['bloginfo'][$field];
@@ -818,6 +833,13 @@ function get_bloginfo($field, $display) {
 
 /** Media **/
 
+/**
+ * Get an &lt;img /> tag for the requested attachment.
+ * @param int $id The attachment ID.
+ * @param string $size The size of the image to display.
+ * @param boolean $icon
+ * @return The &lt;img /> tag for the attachment.
+ */
 function wp_get_attachment_image($id, $size = 'thumbnail', $icon = false) {
   global $wp_test_expectations;
   if (isset($wp_test_expectations['posts'][$id])) {
@@ -827,6 +849,10 @@ function wp_get_attachment_image($id, $size = 'thumbnail', $icon = false) {
 
 /** User roles **/
 
+/**
+ * Set a user capability.
+ * @param string,... $capabilities The capabilities to give the current user.
+ */
 function _set_user_capabilities() {
   global $wp_test_expectations;
   
@@ -836,6 +862,11 @@ function _set_user_capabilities() {
   }
 }
 
+/**
+ * See if the current user can perform all of the requested actions.
+ * @param string,... $capabilities The actions the user should be able to perform.
+ * @return boolean True if the current user can perform all of the actions.
+ */
 function current_user_can() {
   global $wp_test_expectations;
   
@@ -847,6 +878,9 @@ function current_user_can() {
   return $all_valid;
 }
 
+/**
+ * Show the link to edit the current post.
+ */
 function edit_post_link() {}
 
 /** WP_Error class **/
@@ -877,6 +911,13 @@ function is_wp_error($object) {
 
 $_xml_cache = array();
 
+/**
+ * Convert a string to XML.
+ * Additional conversion of HTML entities will be performed to make the string valid XML.
+ * @param string $string The string to convert.
+ * @param boolean $show_exception If true, show any parsing errors.
+ * @return SimpleXMLElement|boolean The SimpleXMLElement of the string, or false if not valid XML.
+ */
 function _to_xml($string, $show_exception = false) {
   global $_xml_cache;
   
@@ -904,6 +945,13 @@ function _to_xml($string, $show_exception = false) {
   return $_xml_cache[$key];
 }
 
+/**
+ * Test a SimpleXMLElement node for the provided XPath.
+ * @param SimpleXMLElement $xml The node to check.
+ * @param string $xpath The XPath to search for.
+ * @param mixed $value Either a string that the XPath's value should match, true if the node simply needs to exist, or false if the node shouldn't exist.
+ * @return boolen True if the XPath matches.
+ */
 function _xpath_test($xml, $xpath, $value) {
   if ($value === true) { $value = "~*exists*~"; }
   if ($value === false) { $value = "~*not exists*~"; }
@@ -920,6 +968,12 @@ function _xpath_test($xml, $xpath, $value) {
   return false;
 }
 
+/**
+ * Return true if the node referred to by the provided XPath.
+ * @param SimpleXMLElement $xml The node to check.
+ * @param string $xpath The XPath to search for.
+ * @return boolean True if the node exists.
+ */
 function _node_exists($xml, $xpath) {
   $result = $xml->xpath($xpath);
   if (is_array($result)) {
@@ -929,6 +983,12 @@ function _node_exists($xml, $xpath) {
   }
 }
 
+/**
+ * Get the value of a node.
+ * @param SimpleXMLElement $xml The node to check.
+ * @param string $xpath The XPath to search for.
+ * @return string|boolean The value of the node, or false if the node does not exist.
+ */
 function _get_node_value($xml, $xpath) {
   $result = $xml->xpath($xpath);
   if (is_array($result)) {
@@ -938,6 +998,11 @@ function _get_node_value($xml, $xpath) {
   }
 }
 
+/**
+ * Wrap an XML string in an additional node.
+ * @param string $string The XML string.
+ * @return SimpleXMLElement An XML node.
+ */
 function _wrap_xml($string) {
   return new SimpleXMLElement("<x>" . $string . "</x>");
 }
