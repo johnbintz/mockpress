@@ -419,6 +419,12 @@ function get_post($id, $output = "") {
   }
 }
 
+/**
+ * Update a post's custom field.
+ * @param int $post_id The post's ID.
+ * @param string $field The field to set.
+ * @param string $value The value to set the field to.
+ */
 function update_post_meta($post_id, $field, $value) {
   global $wp_test_expectations;
   if (!isset($wp_test_expectations['post_meta'][$post_id])) {
@@ -427,6 +433,13 @@ function update_post_meta($post_id, $field, $value) {
   $wp_test_expectations['post_meta'][$post_id][$field] = $value;
 }
 
+/**
+ * Get the value of a post's custom field.
+ * @param int $post_id The post's ID.
+ * @param string $field The field to get.
+ * @param boolean $single If true, return the first field's value.
+ * @return string|array The first value, or all the values that are associated with this field.
+ */
 function get_post_meta($post_id, $field, $single = false) {
   global $wp_test_expectations;
 
@@ -436,6 +449,13 @@ function get_post_meta($post_id, $field, $single = false) {
   return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
 }
 
+/**
+ * Check if a post exists by matching title, content, and date.
+ * @param string $title The title to search for.
+ * @param string $content The content to search for.
+ * @param mixed $date The date to search for.
+ * @return int The ID of the matching post, or 0 if none is found.
+ */
 function post_exists($title, $content, $date) {
   global $wp_test_expectations;
   foreach ($wp_test_expectations['posts'] as $post_id => $post) {
@@ -449,28 +469,52 @@ function post_exists($title, $content, $date) {
   return 0;
 }
 
+/**
+ * Get the permalink to the provided post.
+ * @param object $post The post object.
+ * @return string The permalink to the post.
+ */
 function get_permalink($post) {
   return $post->guid;
 }
 
+/**
+ * Set up a call to get_children()
+ * @param array $options The options that should be matched.
+ * @param array $children The child posts to return.
+ */
 function _set_get_children($options, $children) {
   global $wp_test_expectations;
   $wp_test_expectations['children'][md5(serialize($options))] = $children;
 }
 
+/**
+ * Get the children of a parent post.
+ * @param $options The options to match child posts against.
+ * @return array The matching child posts.
+ */
 function get_children($options) {
   global $wp_test_expectations;
-  var_dump(md5(serialize($options)));
   return $wp_test_expectations['children'][md5(serialize($options))];
 }
 
 /** Core **/
 
+/**
+ * Attach a callback to an action hook.
+ * @param string $name The hook to attach to.
+ * @param callback $callback The callback to execute.
+ */
 function add_action($name, $callback) {
   global $wp_test_expectations;
   $wp_test_expectations['actions'][$name] = $callback;
 }
 
+/**
+ * Attach a callback to a filter hook.
+ * @param string $name The hook to attach to.
+ * @param callback $callback The callback to execute.
+ */
 function add_filter($name, $callback) {
   global $wp_test_expectations;
   $wp_test_expectations['filters'][$name] = $callback;
@@ -478,10 +522,16 @@ function add_filter($name, $callback) {
 
 /** Admin **/
 
+/**
+ * Add a page to the Options menu.
+ */
 function add_options_page($page_title, $menu_title, $access_level, $file, $function = "") {
   add_submenu_page('options-general.php', $page_title, $menu_title, $access_level, $file, $function);
 }
 
+/**
+ * Add a page to the main menu.
+ */
 function add_menu_page($page_title, $menu_title, $access_level, $file, $function, $icon) {
   global $wp_test_expectations;
   $parent = "";
@@ -491,6 +541,9 @@ function add_menu_page($page_title, $menu_title, $access_level, $file, $function
   return "hook name";
 }
 
+/**
+ * Add a page below a main page.
+ */
 function add_submenu_page($parent, $page_title, $menu_title, $access_level, $file, $function = "") {
   global $wp_test_expectations;
   
@@ -499,34 +552,62 @@ function add_submenu_page($parent, $page_title, $menu_title, $access_level, $fil
   return "hook name";
 }
 
+/**
+ * Set whether or not a user can use the rich text editor.
+ * @param boolean $can True if the user can use the editor.
+ */
 function _set_user_can_richedit($can) {
   global $wp_test_expectations;
   $wp_test_expectations['user_can_richedit'] = $can;
 }
 
+/**
+ * Find out if the user can use the rich text editor.
+ * @return boolean True if the user can use the editor.
+ */
 function user_can_richedit() {
   global $wp_test_expectations;
   return $wp_test_expectations['user_can_richedit'];
 }
 
+/**
+ * Embed the rich text editor.
+ */
 function the_editor($content) {
   echo $content;
 }
 
 /** Plugin **/
 
+/**
+ * Get the basename of a file relative to the plugins directory.
+ */
 function plugin_basename($file) { return $file; }
 
+/**
+ * Load the translation files for the current plugin.
+ * @param string $domain The text domain to load files for.
+ * @param string $path The path to the translation files.
+ */
 function load_plugin_textdomain($domain, $path) {
   global $wp_test_expectations;
   $wp_test_expectations['plugin_domains'][] = "${domain}-${path}";
 }
 
+/**
+ * Enqueue a script library to be loaded.
+ * @param string $script The script library to load.
+ */
 function wp_enqueue_script($script) {
   global $wp_test_expectations;
   $wp_test_expectations['enqueued'][$script] = true;
 }
 
+/**
+ * Determine if a script library was enqueued.
+ * @param string $script The script library to check.
+ * @return boolean True if the library was enqueued to be loaded.
+ */
 function _did_wp_enqueue_script($script) {
   global $wp_test_expectations;
   return isset($wp_test_expectations['enqueued'][$script]);
@@ -534,11 +615,21 @@ function _did_wp_enqueue_script($script) {
 
 /** Nonce **/
 
+/**
+ * Set up a specific valid nonce.
+ * @param string $name The name of the nonce.
+ * @param string $value The provided nonce value.
+ */
 function _set_valid_nonce($name, $value) {
   global $wp_test_expectations;
   $wp_test_expectations['nonce'][$name] = $value;
 }
 
+/**
+ * Get a nonce value.
+ * @param string $name The name of the nonce.
+ * @return string|boolean The nonce value, or false if no nonce found.
+ */
 function _get_nonce($name) {
   global $wp_test_expectations;
   if (isset($wp_test_expectations['nonce'][$name])) {
@@ -548,6 +639,11 @@ function _get_nonce($name) {
   }
 }
 
+/**
+ * Create a random nonce.
+ * @param string $name The name of the nonce.
+ * @return string The nonce value.
+ */
 function wp_create_nonce($name) {
   global $wp_test_expectations;
 
@@ -557,6 +653,12 @@ function wp_create_nonce($name) {
   return $wp_test_expectations['nonce'][$name];
 }
 
+/**
+ * Verify that the provided nonce value matches.
+ * @param string $value The value to check.
+ * @param string $name The name of the nonce.
+ * @return boolean True if the nonce matches the provided value.
+ */
 function wp_verify_nonce($value, $name) {
   global $wp_test_expectations;
 
