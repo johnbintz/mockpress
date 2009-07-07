@@ -668,17 +668,23 @@ function wp_verify_nonce($value, $name) {
   return false;
 }
 
+/**
+ * Create an &lt;input /&gt; field ready for a nonce value.
+ * @param string $name The name of both the nonce and the input field.
+ */
 function wp_nonce_field($name) {
   global $wp_test_expectations;
 
-  if (!isset($wp_test_expectations['nonce'][$name])) {
-    $wp_test_expectations['nonce'][$name] = md5(rand());
-  }
-  echo "<input type=\"hidden\" name=\"${name}\" value=\"" . $wp_test_expectations['nonce'][$name] . "\" />";
+  echo "<input type=\"hidden\" name=\"${name}\" value=\"" . wp_create_nonce($name) . "\" />";
 }
 
 /** Theme **/
 
+/**
+ * Get information on the specified theme.
+ * @param string $name The name of the theme.
+ * @return array|null The theme information as an array, or null if not found.
+ */
 function get_theme($name) {
   global $wp_test_expectations;
   if (isset($wp_test_expectations['themes'][$name])) {
@@ -688,11 +694,19 @@ function get_theme($name) {
   }
 }
 
+/**
+ * Get the name of the current theme.
+ * @return string The name of the current theme.
+ */
 function get_current_theme() {
   global $wp_test_expectations;
   return $wp_test_expectations['current_theme'];
 }
 
+/**
+ * Set the name of the current theme.
+ * @param string $theme The name of the current theme.
+ */
 function _set_current_theme($theme) {
   global $wp_test_expectations;
   $wp_test_expectations['current_theme'] = $theme;
@@ -700,15 +714,29 @@ function _set_current_theme($theme) {
 
 /** Query **/
 
+/**
+ * Set up the query string.
+ * @param string $string The query string.
+ */
 function _setup_query($string) {
   $_SERVER['QUERY_STRING'] = $string;
 }
 
+/**
+ * Add an argument to the query string.
+ * @param string $parameter The parameter to add.
+ * @param string $value The value to place in the URL.
+ * @return string The modified query string.
+ */
 function add_query_arg($parameter, $value) {
   $separator = (strpos($_SERVER['QUERY_STRING'], "?") === false) ? "?" : "&";
   return $_SERVER['QUERY_STRING'] . $separator . $parameter . "=" . urlencode($value);
 }
 
+/**
+ * Get the search query from the query string.
+ * @return string The search query, or blank if not found.
+ */
 function get_search_query() {
   $parts = explode("&", preg_replace("#^.*\?#", "", $_SERVER['QUERY_STRING']));
   foreach ($parts as $part) {
@@ -721,22 +749,35 @@ function get_search_query() {
   return "";
 }
 
+/**
+ * Echo out the search query.
+ */
 function the_search_query() {
   echo get_search_query(); 
 }
 
 /** Pre-2.8 Widgets **/
 
+/**
+ * Register a widget.
+ * Wrapper around register_sidebar_widget.
+ */
 function wp_register_sidebar_widget($id, $name, $output_callback, $options = array()) {
   register_sidebar_widget($id, $name, $output_callback, $options);
 }
 
+/**
+ * Register a widget.
+ */
 function register_sidebar_widget($id, $name, $output_callback, $options = array()) {
   global $wp_test_expectations; 
 
   $wp_test_expectations['sidebar_widgets'][] = compact('id', 'name', 'output_callback', 'options');
 }
 
+/**
+ * Register the controls for a widget.
+ */
 function register_widget_control($name, $control_callback, $width = '', $height = '') {
   global $wp_test_expectations; 
   $params = array_slice(func_get_args(), 4);
@@ -746,54 +787,93 @@ function register_widget_control($name, $control_callback, $width = '', $height 
 
 /** Template Tags and Theme Testing **/
 
+/**
+ * Set a theme expectation.
+ * @param string $which The expectation to set.
+ * @param string $value The value to set the expectation to.
+ */
 function _set_theme_expectation($which, $value) {
   global $wp_test_expectations;
   $wp_test_expectations['theme'][$which] = $value; 
 }
 
+/**
+ * Set the template directory.
+ * @param string $dir The template directory.
+ */
 function _set_template_directory($dir) {
   global $wp_test_expectations;
   $wp_test_expectations['theme']['template_directory'] = $dir; 
 }
 
-function is_feed() {
-  global $wp_test_expectations;
-  return $wp_test_expectations['current']['is_feed'];
-}
-
-function is_admin() {
-  global $wp_test_expectations;
-  return $wp_test_expectations['current']['is_admin'];
-}
-
+/**
+ * Set a 'current' expectation, such as if the current page load is an RSS feed.
+ * @param string $field The expectation to set.
+ * @param mixed $value The value of the expectation. Usually a boolean.
+ */
 function _set_current_option($field, $value) {
   global $wp_test_expectations;
   $wp_test_expectations['current'][$field] = $value;
 }
 
+/**
+ * True if currently in an RSS feed.
+ * @return boolean True if in a feed.
+ */
+function is_feed() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current']['is_feed'];
+}
+
+/**
+ * True if the current user is an admin.
+ * @return boolean True if an admin.
+ */
+function is_admin() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current']['is_admin'];
+}
+
+/**
+ * Get plugin data (author, version, etc.)
+ * @param string $filepath The path to the file which contains plugin data.
+ */
 function get_plugin_data($filepath) {
   global $wp_test_expectations;
   return $wp_test_expectations['plugin_data'][$filepath];
 }
 
+/**
+ * Add a post to the main WP_Query Loop.
+ * @param object $post A post to add.
+ */
 function _add_theme_post($post) {
   global $wp_test_expectations;
   $wp_test_expectations['theme']['posts'][] = $post;
 }
 
+/**
+ * Echo the site header.
+ */
 function get_header() {
   global $wp_test_expectations;
-  return $wp_test_expectations['theme']['header']; 
+  echo $wp_test_expectations['theme']['header']; 
 }
 
+/**
+ * Echo the sidebar.
+ */
 function get_sidebar() {
   global $wp_test_expectations;
-  return $wp_test_expectations['theme']['sidebar']; 
+  echo $wp_test_expectations['theme']['sidebar']; 
 }
 
+/**
+ * Echo the footer.
+ */
 function get_footer() {
   global $wp_test_expectations;
-  return $wp_test_expectations['theme']['footer']; 
+  echo $wp_test_expectations['theme']['footer']; 
 }
 
 function have_posts() {
