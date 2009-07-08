@@ -629,7 +629,7 @@ function wp_register_sidebar_widget($id, $name, $output_callback, $options = arr
   register_sidebar_widget($id, $name, $output_callback, $options);
 }
 
-function register_sidebar_widget($id, $name, $output_callback, $options = array()) {
+function register_sidebar_widget($id, $name, $output_callback = "", $options = array()) {
   global $wp_test_expectations; 
 
   $wp_test_expectations['sidebar_widgets'][] = compact('id', 'name', 'output_callback', 'options');
