@@ -850,6 +850,10 @@ function plugin_dir_url($file) {
   return $file;
 }
 
+function plugins_url($path = '', $plugin = '') {
+  return $path;
+}
+
 /**
  * Add a post to the main WP_Query Loop.
  * @param object $post A post to add.
