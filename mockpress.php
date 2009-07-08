@@ -844,6 +844,13 @@ function get_plugin_data($filepath) {
 }
 
 /**
+ * Return the URL to the plugin directory that contains the provided file.
+ */
+function plugin_dir_url($file) {
+  return $file;
+}
+
+/**
  * Add a post to the main WP_Query Loop.
  * @param object $post A post to add.
  */
