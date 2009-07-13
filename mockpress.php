@@ -510,6 +510,10 @@ function add_action($name, $callback) {
   $wp_test_expectations['actions'][$name] = $callback;
 }
 
+function do_action($name) {
+  
+}
+
 /**
  * Attach a callback to a filter hook.
  * @param string $name The hook to attach to.
