@@ -404,6 +404,19 @@ function wp_insert_post($array) {
 }
 
 /**
+ * Update a post in the database.
+ * @param array|object $post The post to udate.
+ */
+function wp_update_post($object) {
+  global $wp_test_expectations;
+  if (is_array($object)) { $object = (object)$object; }
+  
+  if (isset($wp_test_expectations['posts'][$object->ID])) {
+    $wp_test_expectations['posts'][$object->ID] = $object;
+  }
+}
+
+/**
  * Get a post from the database.
  * @param int $id The post to retrieve.
  * @param string $output
