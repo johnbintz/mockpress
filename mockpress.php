@@ -418,6 +418,19 @@ function wp_update_post($post) {
 }
 
 /**
+ * Update a post in the database.
+ * @param array|object $post The post to udate.
+ */
+function wp_update_post($object) {
+  global $wp_test_expectations;
+  if (is_array($object)) { $object = (object)$object; }
+  
+  if (isset($wp_test_expectations['posts'][$object->ID])) {
+    $wp_test_expectations['posts'][$object->ID] = $object;
+  }
+}
+
+/**
  * Get a post from the database.
  * @param int $id The post to retrieve.
  * @param string $output
@@ -522,6 +535,10 @@ function get_children($options) {
 function add_action($name, $callback) {
   global $wp_test_expectations;
   $wp_test_expectations['actions'][$name] = $callback;
+}
+
+function do_action($name) {
+  
 }
 
 /**
