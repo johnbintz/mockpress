@@ -403,20 +403,6 @@ function wp_insert_post($array) {
   return $id;
 }
 
-function wp_update_post($post) {
-  global $wp_test_expectations;
-  
-  $post = (object)$post;
-  
-  if (isset($post->ID)) {
-    if (isset($wp_test_expectations[$posts][$post->ID])) {
-      $wp_test_expectations[$posts][$post->ID] = $post;
-      return true;
-    }
-  }
-  return false;
-}
-
 /**
  * Update a post in the database.
  * @param array|object $post The post to udate.
