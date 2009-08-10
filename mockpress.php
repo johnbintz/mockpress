@@ -39,7 +39,9 @@ function _reset_wp() {
     ),
     'bloginfo' => array(),
     'user_capabilities' => array(),
-    'children' => array()
+    'children' => array(),
+    'current_user' => null,
+    'users' => array()
   );
 }
 
@@ -1088,6 +1090,35 @@ function current_user_can() {
   return $all_valid;
 }
 
+/** Users **/
+
+function wp_get_current_user() {
+   
+}
+
+function wp_insert_user($userdata) {
+  global $wp_test_expectations;
+  
+  if (!is_object($userdata)) { $userdata = (object)$userdata; }  
+  if (isset($userdata->ID)) {
+    $id = $userdata->ID;
+  } else {
+    $id = max(array_keys($wp_test_expectations['users'])) + 1;
+    $userdata->ID = $id;
+  }
+  $wp_test_expectations['users'][$id] = $userdata;
+}
+
+function get_userdata($id) {
+  global $wp_test_expectations;
+  
+  if (isset($wp_test_expectations['users'][$id])) {
+    return $wp_test_expectations['users'][$id];
+  } else {
+    return false; 
+  }
+}
+
 /**
  * Show the link to edit the current post.
  */
@@ -1096,6 +1127,13 @@ function edit_post_link() {}
 /** WP_Error class **/
 
 class WP_Error {}
+
+/** WP_user class **/
+
+class WP_User {
+  var $data, $ID, $cap_key, $first_name, $last_name;
+  var $caps = array(); 
+}
 
 /** WP_Widget class **/
 
