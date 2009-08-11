@@ -1069,6 +1069,7 @@ function _set_user_capabilities() {
   global $wp_test_expectations;
   
   $capabilities = func_get_args(); 
+  if (is_array($capabilities[0])) { $capabilities = $capabilities[0]; }
   foreach ($capabilities as $capability) {
     $wp_test_expectations['user_capabilities'][$capability] = true;
   }
@@ -1092,14 +1093,41 @@ function current_user_can() {
 
 /** Users **/
 
-function wp_get_current_user() {
-   
+/**
+ * Set the current user.
+ * The user must have already been inserted via wp_insert_user.
+ * @param int $id The ID of the user to set.
+ * @param string $name The name of the user to set. Not currently used by MockPress.
+ */
+function wp_set_current_user($id, $name = '') {
+  global $wp_test_expectations;
+  
+  $wp_test_expectations['current_user'] = (isset($wp_test_expectations['users'][$id]) ? $id : null);
 }
 
+/**
+ * Get the current user.
+ * The user must have already been inserted by wp_insert_user and set via wp_set_current_user.
+ * @return WP_User|null The requested WP_User or null if not found.
+ */
+function wp_get_current_user() {
+  global $wp_test_expectations;
+  
+  if (isset($wp_test_expectations['users'][$wp_test_expectations['current_user']])) {
+    return $wp_test_expectations['users'][$wp_test_expectations['current_user']];
+  } else {
+    return null; 
+  }
+}
+
+/**
+ * Insert a new user.
+ * @param WP_User $userdata The userdata to insert.
+ */
 function wp_insert_user($userdata) {
   global $wp_test_expectations;
   
-  if (!is_object($userdata)) { $userdata = (object)$userdata; }  
+  if (!is_object($userdata)) { $userdata = (object)$userdata; }
   if (isset($userdata->ID)) {
     $id = $userdata->ID;
   } else {
@@ -1109,6 +1137,11 @@ function wp_insert_user($userdata) {
   $wp_test_expectations['users'][$id] = $userdata;
 }
 
+/**
+ * Get a user's user data.
+ * @param int $id The ID to retrieve.
+ * @return WP_User|false The found user or false if not found.
+ */
 function get_userdata($id) {
   global $wp_test_expectations;
   
