@@ -869,6 +869,9 @@ function plugin_dir_url($file) {
   return $file;
 }
 
+/**
+ * Return the URL to the plugin directory.
+ */
 function plugins_url($path = '', $plugin = '') {
   return $path;
 }
