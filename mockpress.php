@@ -906,11 +906,17 @@ function get_footer() {
   echo $wp_test_expectations['theme']['footer']; 
 }
 
+/**
+ * Are there posts for the theme?
+ */
 function have_posts() {
   global $wp_test_expectations;
   return is_array($wp_test_expectations['theme']['posts']) && !empty($wp_test_expectations['theme']['posts']);
 }
 
+/**
+ * Get the current Loop post.
+ */
 function the_post() {
   global $wp_test_expectations, $post;
   if (is_array($wp_test_expectations['theme']['posts']) && !empty($wp_test_expectations['theme']['posts'])) {
@@ -918,31 +924,50 @@ function the_post() {
   }
 }
 
+/**
+ * Echo the ID of the current Loop post.
+ */
 function the_ID() {
   global $post;
   echo $post->ID; 
 }
 
+/**
+ * Echo the permalink to the current Loop post.
+ * For testing purposes, this is just the guid of the current post.
+ */
 function the_permalink() {
   global $post;
   echo $post->guid; 
 }
 
+/**
+ * Echo the post title of the current Loop post.
+ */
 function the_title() {
   global $post;
   echo $post->post_title; 
 }
 
+/**
+ * Echo the post title, run through htmlentitles, of the current Loop post.
+ */
 function the_title_attribute() {
   global $post;
   echo htmlentities($post->post_title);
 }
 
+/**
+ * Echo the post time of the current Loop post, run through date().
+ */
 function the_time($format) {
   global $post;
   echo date($format, $post->post_date);
 }
 
+/**
+ * Echo the post author of the current Loop post.
+ */
 function the_author() {
   global $post;
   echo $post->post_author;
@@ -1150,6 +1175,33 @@ function get_userdata($id) {
   } else {
     return false; 
   }
+}
+
+/**
+ * Set the output of get_users_of_blog().
+ * Doesn't handle multi-blog support (yet).
+ * @param array $users The users to set.
+ */
+function _set_users_of_blog($users) {
+  global $wp_test_expectations;
+  
+  foreach ($users as $user) {
+    $user = (object)$user;
+    if (isset($user->ID)) {
+      $wp_test_expectations['users'][$user->ID] = $user; 
+    } 
+  } 
+}
+
+/**
+ * Get the users of the blog.
+ * @param string $id The blog ID to search.
+ * @return array The list of users.
+ */
+function get_users_of_blog($id = '') {
+  global $wp_test_expectations;
+  
+  return array_vallues($wp_test_expectations['users']); 
 }
 
 /**
