@@ -41,7 +41,8 @@ function _reset_wp() {
     'user_capabilities' => array(),
     'children' => array(),
     'current_user' => null,
-    'users' => array()
+    'users' => array(),
+    'user_meta' => array()
   );
 }
 
@@ -1150,6 +1151,62 @@ function get_userdata($id) {
   } else {
     return false; 
   }
+}
+
+/**
+ * Get meta data from a user.
+ * If $key is empty(), return all the metadata values in an array.
+ * @param int $id The ID to retrieve.
+ * @param string $key The metadata key to retrieve.
+ * @return mixed|boolean False if the user doesn't exist, otherwise the retrieved data.
+ */
+function get_usermeta($id, $key = '') {
+  global $wp_test_expectations;
+
+  if (isset($wp_test_expectations['user_meta'][$id])) {
+    if (empty($key)) {
+      return array_values($wp_test_expectations['user_meta'][$id]);
+    } else {
+      if (isset($wp_test_expectations['user_meta'][$id][$key])) {
+        $data = $wp_test_expectations['user_meta'][$id][$key];
+        if (is_array($data)) {
+          if (count($data) == 1) { $data = reset($data); }
+        }
+        return $data;
+      } else {
+        return '';
+      }
+    }
+  } else {
+    return false;
+  }
+}
+
+/**
+ * Create or update a user's meta data field.
+ * @param int $id The ID to manage.
+ * @param string $key The key to use.
+ * @param mixed $value The value to insert. If this is empty(), delete the key.
+ * @return boolean True if successful.
+ * @todo Check to see if a blank meta key should be allowed, both here and in WP proper.
+ */
+function update_usermeta($id, $key, $value) {
+  global $wp_test_expectations;
+
+  if (!is_numeric($id)) { return false; }
+  $key = preg_replace('#^[a-z0-9_]#i', '', $key);
+
+  if (!isset($wp_test_expectations['user_meta'][$id])) {
+    $wp_test_expectations['user_meta'][$id] = array();
+  }
+
+  if (empty($value)) {
+    unset($wp_test_expectations['user_meta'][$id][$key]);
+  } else {
+    $wp_test_expectations['user_meta'][$id][$key] = $value;
+  }
+
+  return true;
 }
 
 /**
