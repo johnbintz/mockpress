@@ -25,9 +25,9 @@
 Built from http://github.com/johnbintz/mockpress
  </notes>
  <contents>
-  <dir baseinstalldir="PEAR/MockPress" name="/">
-   <file baseinstalldir="PEAR/MockPress" md5sum="28611b128ddeabda307c12ccf86500d0" name="mockpress.php" role="php" />
-   <file baseinstalldir="PEAR/MockPress" md5sum="5c8d5e7bf91e1dcbce55d021b7a11d8a" name="README" role="data" />
+  <dir baseinstalldir="MockPress" name="/">
+   <file baseinstalldir="MockPress" md5sum="28611b128ddeabda307c12ccf86500d0" name="mockpress.php" role="php" />
+   <file baseinstalldir="MockPress" md5sum="5c8d5e7bf91e1dcbce55d021b7a11d8a" name="README" role="data" />
   </dir>
  </contents>
  <dependencies>
