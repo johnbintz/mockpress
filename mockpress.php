@@ -1197,9 +1197,6 @@ function get_usermeta($id, $key = '') {
     } else {
       if (isset($wp_test_expectations['user_meta'][$id][$key])) {
         $data = $wp_test_expectations['user_meta'][$id][$key];
-        if (is_array($data)) {
-          if (count($data) == 1) { $data = reset($data); }
-        }
         return $data;
       } else {
         return '';
@@ -1222,8 +1219,8 @@ function update_usermeta($id, $key, $value) {
   global $wp_test_expectations;
 
   if (!is_numeric($id)) { return false; }
-  $key = preg_replace('#^[a-z0-9_]#i', '', $key);
-
+  $key = preg_replace('#^[^a-z0-9_]#i', '', $key);
+  
   if (!isset($wp_test_expectations['user_meta'][$id])) {
     $wp_test_expectations['user_meta'][$id] = array();
   }
@@ -1235,6 +1232,14 @@ function update_usermeta($id, $key, $value) {
   }
 
   return true;
+}
+
+function delete_usermeta($id, $key) {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['user_meta'][$id])) {
+    unset($wp_test_expectations['user_meta'][$id][$key]);
+  }
+}
 
 /**
  * Set the output of get_users_of_blog().

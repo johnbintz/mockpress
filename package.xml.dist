@@ -10,11 +10,11 @@
   <email>john@coswellproductions.com</email>
   <active>yes</active>
  </lead>
- <date>2009-10-16</date>
- <time>23:19:10</time>
+ <date>{date}</date>
+ <time>{time}</time>
  <version>
-  <release>0.1.20091016</release>
-  <api>0.1.20091016</api>
+  <release>0.1.{datetime}</release>
+  <api>0.1.{datetime}</api>
  </version>
  <stability>
   <release>alpha</release>
@@ -44,14 +44,14 @@ Built from http://github.com/johnbintz/mockpress
  <changelog>
   <release>
    <version>
-    <release>0.1.20091016</release>
-    <api>0.1.20091016</api>
+    <release>0.1.{datetime}</release>
+    <api>0.1.{datetime}</api>
    </version>
    <stability>
     <release>alpha</release>
     <api>alpha</api>
    </stability>
-   <date>2009-10-16</date>
+   <date>{date}</date>
    <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL</license>
    <notes>
 Built from http://github.com/johnbintz/mockpress
