@@ -20,7 +20,7 @@
   <release>alpha</release>
   <api>alpha</api>
  </stability>
- <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL</license>
+ <license uri="http://www.opensource.org/licenses/mit-license.php">MIT</license>
  <notes>
 Built from http://github.com/johnbintz/mockpress
  </notes>
