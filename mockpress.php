@@ -388,7 +388,7 @@ function get_posts($query) {
  * @param array $post The post information.
  * @return int The post ID.
  */
-function wp_insert_post($array) {
+function wp_insert_post($post) {
   global $wp_test_expectations;
 
   $array = (array)$array;
