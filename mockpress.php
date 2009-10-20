@@ -385,10 +385,10 @@ function get_posts($query) {
 
 /**
  * Insert a post into the database.
- * @param array $post The post information.
+ * @param array $array The post information.
  * @return int The post ID.
  */
-function wp_insert_post($post) {
+function wp_insert_post($array) {
   global $wp_test_expectations;
 
   $array = (array)$array;
