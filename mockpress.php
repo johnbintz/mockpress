@@ -1300,6 +1300,8 @@ class WP_Widget {
   function get_field_name($field_name) { return "$id[$field_name]"; }
 }
 
+function register_widget() {}
+
 function is_wp_error($object) {
   return (is_a($object, "WP_Error"));
 }
