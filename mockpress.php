@@ -466,6 +466,22 @@ function get_post_meta($post_id, $field, $single = false) {
 }
 
 /**
+ * Delete a post's custom field.
+ * @param int $post_id The post's ID.
+ * @param string $field The field to get.
+ * @return string|array The first value, or all the values that are associated with this field.
+ */
+function delete_post_meta($post_id, $field, $value = '') {
+  global $wp_test_expectations;
+
+  if (!isset($wp_test_expectations['post_meta'][$post_id])) { return false; }
+  if (!isset($wp_test_expectations['post_meta'][$post_id][$field])) { return false; }
+
+  unset($wp_test_expectations['post_meta'][$post_id][$field]);
+  return true;
+}
+
+/**
  * Check if a post exists by matching title, content, and date.
  * @param string $title The title to search for.
  * @param string $content The content to search for.
@@ -762,10 +778,10 @@ function get_search_query() {
   foreach ($parts as $part) {
     list($param, $value) = explode("=", $part);
     if ($param == "s") {
-      return $value; 
+      return $value;
     }
   }
-  
+
   return "";
 }
 
@@ -773,7 +789,7 @@ function get_search_query() {
  * Echo out the search query.
  */
 function the_search_query() {
-  echo get_search_query(); 
+  echo get_search_query();
 }
 
 /** Pre-2.8 Widgets **/
@@ -790,7 +806,7 @@ function wp_register_sidebar_widget($id, $name, $output_callback, $options = arr
  * Register a widget.
  */
 function register_sidebar_widget($id, $name, $output_callback = "", $options = array()) {
-  global $wp_test_expectations; 
+  global $wp_test_expectations;
 
   $wp_test_expectations['sidebar_widgets'][] = compact('id', 'name', 'output_callback', 'options');
 }
@@ -799,7 +815,7 @@ function register_sidebar_widget($id, $name, $output_callback = "", $options = a
  * Register the controls for a widget.
  */
 function register_widget_control($name, $control_callback, $width = '', $height = '') {
-  global $wp_test_expectations; 
+  global $wp_test_expectations;
   $params = array_slice(func_get_args(), 4);
 
   $wp_test_expectations['widget_controls'][] = compact('id', 'name', 'output_callback', 'options', 'params');
@@ -814,7 +830,7 @@ function register_widget_control($name, $control_callback, $width = '', $height 
  */
 function _set_theme_expectation($which, $value) {
   global $wp_test_expectations;
-  $wp_test_expectations['theme'][$which] = $value; 
+  $wp_test_expectations['theme'][$which] = $value;
 }
 
 /**
@@ -823,7 +839,7 @@ function _set_theme_expectation($which, $value) {
  */
 function _set_template_directory($dir) {
   global $wp_test_expectations;
-  $wp_test_expectations['theme']['template_directory'] = $dir; 
+  $wp_test_expectations['theme']['template_directory'] = $dir;
 }
 
 /**
@@ -891,7 +907,7 @@ function _add_theme_post($post) {
  */
 function get_header() {
   global $wp_test_expectations;
-  echo $wp_test_expectations['theme']['header']; 
+  echo $wp_test_expectations['theme']['header'];
 }
 
 /**
@@ -899,7 +915,7 @@ function get_header() {
  */
 function get_sidebar() {
   global $wp_test_expectations;
-  echo $wp_test_expectations['theme']['sidebar']; 
+  echo $wp_test_expectations['theme']['sidebar'];
 }
 
 /**
@@ -907,7 +923,7 @@ function get_sidebar() {
  */
 function get_footer() {
   global $wp_test_expectations;
-  echo $wp_test_expectations['theme']['footer']; 
+  echo $wp_test_expectations['theme']['footer'];
 }
 
 /**
@@ -933,7 +949,7 @@ function the_post() {
  */
 function the_ID() {
   global $post;
-  echo $post->ID; 
+  echo $post->ID;
 }
 
 /**
@@ -942,7 +958,7 @@ function the_ID() {
  */
 function the_permalink() {
   global $post;
-  echo $post->guid; 
+  echo $post->guid;
 }
 
 /**
@@ -950,7 +966,7 @@ function the_permalink() {
  */
 function the_title() {
   global $post;
-  echo $post->post_title; 
+  echo $post->post_title;
 }
 
 /**
@@ -984,7 +1000,7 @@ function the_author() {
 function the_content($more_link_text = "") {
   global $post;
   echo $post->post_content;
-  
+
   if (strpos($post->post_content, "<!--more") !== false) {
     echo $more_link_text;
   }
@@ -998,12 +1014,12 @@ function the_content($more_link_text = "") {
  */
 function the_tags($start, $separator, $finish) {
   global $post;
-  
+
   $tag_output = array();
   foreach (wp_get_post_tags($post->ID) as $tag) {
     $tag_output = '<a href="' . $tag->slug . '">' . $tag->name . '</a>';
   }
-  
+
   echo $start . implode($separator, $tag_output) . $finish;
 }
 
@@ -1014,12 +1030,12 @@ function the_tags($start, $separator, $finish) {
  */
 function the_category($separator) {
   global $post;
-  
+
   $category_output = array();
   foreach (wp_get_post_tags($post->ID) as $category) {
     $category_output = '<a href="' . $category->slug . '">' . $category->name . '</a>';
   }
-  
+
   echo implode($separator, $category_output);
 }
 
@@ -1040,7 +1056,7 @@ function next_posts_link($link_text) {
  */
 function get_template_directory() {
   global $wp_test_expectations;
-  return $wp_test_expectations['theme']['template_directory'];  
+  return $wp_test_expectations['theme']['template_directory'];
 }
 
 /**
@@ -1050,7 +1066,7 @@ function get_template_directory() {
  */
 function _set_bloginfo($field, $value) {
   global $wp_test_expectations;
-  $wp_test_expectations['bloginfo'][$field] = $value;  
+  $wp_test_expectations['bloginfo'][$field] = $value;
 }
 
 /**
@@ -1096,8 +1112,8 @@ function wp_get_attachment_image($id, $size = 'thumbnail', $icon = false) {
  */
 function _set_user_capabilities() {
   global $wp_test_expectations;
-  
-  $capabilities = func_get_args(); 
+
+  $capabilities = func_get_args();
   if (is_array($capabilities[0])) { $capabilities = $capabilities[0]; }
   foreach ($capabilities as $capability) {
     $wp_test_expectations['user_capabilities'][$capability] = true;
@@ -1111,8 +1127,8 @@ function _set_user_capabilities() {
  */
 function current_user_can() {
   global $wp_test_expectations;
-  
-  $capabilities = func_get_args(); 
+
+  $capabilities = func_get_args();
   $all_valid = true;
   foreach ($capabilities as $capability) {
     if (!$wp_test_expectations['user_capabilities'][$capability]) { $all_valid = false; break; }
@@ -1130,7 +1146,7 @@ function current_user_can() {
  */
 function wp_set_current_user($id, $name = '') {
   global $wp_test_expectations;
-  
+
   $wp_test_expectations['current_user'] = (isset($wp_test_expectations['users'][$id]) ? $id : null);
 }
 
@@ -1141,11 +1157,11 @@ function wp_set_current_user($id, $name = '') {
  */
 function wp_get_current_user() {
   global $wp_test_expectations;
-  
+
   if (isset($wp_test_expectations['users'][$wp_test_expectations['current_user']])) {
     return $wp_test_expectations['users'][$wp_test_expectations['current_user']];
   } else {
-    return null; 
+    return null;
   }
 }
 
@@ -1155,7 +1171,7 @@ function wp_get_current_user() {
  */
 function wp_insert_user($userdata) {
   global $wp_test_expectations;
-  
+
   if (!is_object($userdata)) { $userdata = (object)$userdata; }
   if (isset($userdata->ID)) {
     $id = $userdata->ID;
@@ -1173,11 +1189,11 @@ function wp_insert_user($userdata) {
  */
 function get_userdata($id) {
   global $wp_test_expectations;
-  
+
   if (isset($wp_test_expectations['users'][$id])) {
     return $wp_test_expectations['users'][$id];
   } else {
-    return false; 
+    return false;
   }
 }
 
@@ -1235,6 +1251,7 @@ function update_usermeta($id, $key, $value) {
   }
 
   return true;
+}
 
 /**
  * Set the output of get_users_of_blog().
@@ -1243,13 +1260,13 @@ function update_usermeta($id, $key, $value) {
  */
 function _set_users_of_blog($users) {
   global $wp_test_expectations;
-  
+
   foreach ($users as $user) {
     $user = (object)$user;
     if (isset($user->ID)) {
-      $wp_test_expectations['users'][$user->ID] = $user; 
-    } 
-  } 
+      $wp_test_expectations['users'][$user->ID] = $user;
+    }
+  }
 }
 
 /**
@@ -1259,7 +1276,7 @@ function _set_users_of_blog($users) {
  */
 function get_users_of_blog($id = '') {
   global $wp_test_expectations;
-  
+
   return array_values($wp_test_expectations['users']);
 }
 
@@ -1276,7 +1293,7 @@ class WP_Error {}
 
 class WP_User {
   var $data, $ID, $cap_key, $first_name, $last_name;
-  var $caps = array(); 
+  var $caps = array();
 }
 
 /** WP_Widget class **/
@@ -1290,7 +1307,7 @@ class WP_Widget {
   function widget($args, $instance) {}
   function update($new_instance, $old_instance) {}
   function form($instance) {}
-  
+
   function get_field_id($field_name) { return "$id-$field_name"; }
   function get_field_name($field_name) { return "$id[$field_name]"; }
 }
@@ -1312,7 +1329,7 @@ $_xml_cache = array();
  */
 function _to_xml($string, $show_exception = false) {
   global $_xml_cache;
-  
+
   $key = md5($string);
   if (!isset($_xml_cache[$key])) {
     try {
@@ -1324,7 +1341,7 @@ function _to_xml($string, $show_exception = false) {
     } catch (Exception $e) {
       if ($show_exception) {
         echo $e->getMessage() . "\n\n";
-        
+
         $lines = explode("\n", $string);
         for ($i = 0, $il = count($lines); $i < $il; ++$i) {
           echo str_pad(($i + 1), strlen($il), " ", STR_PAD_LEFT) . "# " . $lines[$i] . "\n";
@@ -1332,7 +1349,7 @@ function _to_xml($string, $show_exception = false) {
         echo "\n";
       }
       $_xml_cache[$key] = false;
-    }    
+    }
   }
   return $_xml_cache[$key];
 }
@@ -1350,10 +1367,10 @@ function _xpath_test($xml, $xpath, $value) {
   switch ($value) {
     case "~*exists*~":
       return _node_exists($xml, $xpath);
-      break; 
+      break;
     case "~*not exists*~":
       return !(_node_exists($xml, $xpath));
-      break; 
+      break;
     default:
       return _get_node_value($xml, $xpath) == $value;
   }
