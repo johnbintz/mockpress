@@ -387,7 +387,7 @@ function get_posts($query) {
 
 /**
  * Insert a post into the database.
- * @param array $post The post information.
+ * @param array $array The post information.
  * @return int The post ID.
  */
 function wp_insert_post($array) {
@@ -1215,9 +1215,6 @@ function get_usermeta($id, $key = '') {
     } else {
       if (isset($wp_test_expectations['user_meta'][$id][$key])) {
         $data = $wp_test_expectations['user_meta'][$id][$key];
-        if (is_array($data)) {
-          if (count($data) == 1) { $data = reset($data); }
-        }
         return $data;
       } else {
         return '';
@@ -1240,8 +1237,8 @@ function update_usermeta($id, $key, $value) {
   global $wp_test_expectations;
 
   if (!is_numeric($id)) { return false; }
-  $key = preg_replace('#^[a-z0-9_]#i', '', $key);
-
+  $key = preg_replace('#^[^a-z0-9_]#i', '', $key);
+  
   if (!isset($wp_test_expectations['user_meta'][$id])) {
     $wp_test_expectations['user_meta'][$id] = array();
   }
@@ -1253,6 +1250,13 @@ function update_usermeta($id, $key, $value) {
   }
 
   return true;
+}
+
+function delete_usermeta($id, $key) {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['user_meta'][$id])) {
+    unset($wp_test_expectations['user_meta'][$id][$key]);
+  }
 }
 
 /**
@@ -1301,7 +1305,7 @@ class WP_User {
 /** WP_Widget class **/
 
 class WP_Widget {
-  function WP_Widget($id, $name, $widget_options, $control_options) {
+  function WP_Widget($id, $name, $widget_options = array(), $control_options = array()) {
     global $wp_test_expectations;
     $wp_test_expectations['wp_widgets'][$id] = compact('id', 'name', 'widget_options', 'widget_controls');
     $this->id = $id;
@@ -1313,6 +1317,8 @@ class WP_Widget {
   function get_field_id($field_name) { return "$id-$field_name"; }
   function get_field_name($field_name) { return "$id[$field_name]"; }
 }
+
+function register_widget() {}
 
 function is_wp_error($object) {
   return (is_a($object, "WP_Error"));
