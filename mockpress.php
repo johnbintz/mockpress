@@ -365,6 +365,7 @@ function get_tags() {
  */
 function _set_up_get_posts_response($query, $result) {
   global $wp_test_expectations;
+  if (!is_string($query)) { $query = serialize($query); }
   $wp_test_expectations['get_posts'][$query] = $result;
 }
 
@@ -375,6 +376,7 @@ function _set_up_get_posts_response($query, $result) {
  */
 function get_posts($query) {
   global $wp_test_expectations;
+  if (!is_string($query)) { $query = serialize($query); }
   
   if (isset($wp_test_expectations['get_posts'][$query])) {
     return $wp_test_expectations['get_posts'][$query];
