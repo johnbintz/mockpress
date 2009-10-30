@@ -330,11 +330,32 @@ function wp_get_post_tags($post_id) {
 /**
  * Set a post's tags.
  * @param int $post_id The post to modify.
- * @param array $tags The tags to set for this post.
+ * @param array $tags The tags to set for this post. Note that these should be text strings and not objects. E_USER_WARNING will be raised if you don't pass in a string.
+ * @raises E_USER_WARNING if an object other than a string exists in the $tags array. 
  */
 function wp_set_post_tags($post_id, $tags) {
   global $wp_test_expectations;
-  if (!is_array($tags)) { $categories = array($tags); }
+  $tags = (array)$tags;
+  foreach ($tags as $tag) {
+    if (!is_string($tag)) { trigger_error("All tags sent to wp_set_post_tags() need to be strings."); } 
+  }
+  $wp_test_expectations['post_tags'][$post_id] = array();
+  foreach ($tags as $tag) {
+    $wp_test_expectations['post_tags'][$post_id][] = (object)array(
+      'name' => $tag, 'slug' => $tag 
+    );
+  }
+}
+
+/**
+ * Set the wp_get_post_tags response for the requested post.
+ * You can't pass in objects for wp_set_post_tags, so if you need more information beyond name & slug, use this.
+ * No checking is done to ensure you're passing in sane data.
+ * @param int $post_id The post to modify.
+ * @param array $tags The tags to set.
+ */
+function _set_wp_post_tag_objects($post_id, $tags) {
+  global $wp_test_expectations;
   $wp_test_expectations['post_tags'][$post_id] = $tags;
 }
 
