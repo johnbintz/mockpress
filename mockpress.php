@@ -574,9 +574,66 @@ function do_action($name) {
  * @param string $name The hook to attach to.
  * @param callback $callback The callback to execute.
  */
-function add_filter($name, $callback) {
+function add_filter($name, $callback, $priority = 10, $parameters = 2) {
   global $wp_test_expectations;
-  $wp_test_expectations['filters'][$name] = $callback;
+  if (!isset($wp_test_expectations['filters'][$name])) {
+    $wp_test_expectations['filters'][$name] = array();
+  }
+  if (!isset($wp_test_expectations['filters'][$name][$priority])) {
+    $wp_test_expectations['filters'][$name][$priority] = array();
+  }
+  $wp_test_expectations['filters'][$name][$priority] = compact('callback', 'parameter_count');
+  ksort($wp_test_expectations['filters'][$name]);
+}
+
+/**
+ * Run attached filter hooks.
+ * @param string $name The hook to call.
+ * @param mixed,... $arguments The arguments to the hooks.
+ * @return mixed The return value.
+ */
+function apply_filters() {
+  global $wp_test_expectations;
+  
+  $parameters = func_get_args();
+  $name = array_shift($parameters);
+
+  if (isset($wp_test_expectations['filters'][$name])) {
+    // override the normal filter processing
+    $override = false;
+    if (count($wp_test_expectations['filters'][$name]) == 2) {
+      if ($wp_test_expectations['filters'][$name][0] === true) {
+        $parameters = $wp_test_expectations['filters'][$name][1];
+        $override = true;
+      }
+    }
+    if (!$override) {
+      foreach ($wp_test_expectations['filters'][$name] as $priority => $callbacks) {
+        foreach ($callbacks as $info) {
+          extract($info);
+          if (count($parameters) == $parameter_count) {
+            $parameters = call_user_func_array($callback, $paremeters);
+          } else {
+            throw new Exception("Got " . count($parameters) . " parameters, expected ${parameter_count} for filter ${name}, callback " . print_r($callback, true));
+          }
+        }
+      }
+    }
+  }
+  if (count($parameters) == 1) { $parameters = reset($parameters); }
+  return $parameters;
+}
+
+/**
+ * Set the expected result for a particular filter.
+ * @param string $name The name of the filter
+ * @param array $result The result of the filter.
+ */
+function _set_filter_expectation($name, $result) {
+  global $wp_test_expectations;
+
+  $result = (array)$result;
+  $wp_test_expectations['filters'][$name] = array(true, $result);
 }
 
 /** Admin **/
