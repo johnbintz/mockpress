@@ -7,6 +7,8 @@
 
 $wp_test_expectations = array();
 
+require_once('includes/cache.php');
+
 /**
  * Reset the WordPress test expectations.
  */
@@ -44,9 +46,15 @@ function _reset_wp() {
     'users' => array(),
     'user_meta' => array()
   );
+
+  wp_cache_init();
 }
 
 /*** WordPress Test Doubles ***/
+
+function wp_clone($object) {
+  return version_compare(phpversion(). '5.0', '>=') ? clone($object) : $object;
+}
 
 /** Options **/
 

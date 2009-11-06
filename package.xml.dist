@@ -26,8 +26,11 @@ Built from http://github.com/johnbintz/mockpress
  </notes>
  <contents>
   <dir baseinstalldir="MockPress" name="/">
-   <file baseinstalldir="MockPress" md5sum="28611b128ddeabda307c12ccf86500d0" name="mockpress.php" role="php" />
-   <file baseinstalldir="MockPress" md5sum="5c8d5e7bf91e1dcbce55d021b7a11d8a" name="README" role="data" />
+   <file name="mockpress.php" role="php" />
+   <file name="README" role="data" />
+   <dir name="includes">
+     <file name="cache.php" role="php" />
+   </dir>
   </dir>
  </contents>
  <dependencies>
