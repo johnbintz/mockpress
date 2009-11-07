@@ -933,6 +933,15 @@ function _set_template_directory($dir) {
 }
 
 /**
+ * Set the child theme's directory.
+ * @param string $dir The template directory.
+ */
+function _set_stylesheet_directory($dir) {
+  global $wp_test_expectations;
+  $wp_test_expectations['theme']['stylesheet_directory'] = $dir;
+}
+
+/**
  * Set a 'current' expectation, such as if the current page load is an RSS feed.
  * @param string $field The expectation to set.
  * @param mixed $value The value of the expectation. Usually a boolean.
@@ -1148,6 +1157,17 @@ function get_template_directory() {
   global $wp_test_expectations;
   if (isset($wp_test_expectations['theme']['template_directory'])) {
 	  return $wp_test_expectations['theme']['template_directory'];
+  }
+}
+
+/**
+ * Get the child theme's root directory.
+ * @return string The child theme's root directory.
+ */
+function get_stylesheet_directory() {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['theme']['stylesheet_directory'])) {
+	  return $wp_test_expectations['theme']['stylesheet_directory'];
   }
 }
 
