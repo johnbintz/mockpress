@@ -252,7 +252,9 @@ function get_category($id) {
   if (!isset($wp_test_expectations['categories'])) {
     return new WP_Error();
   } else {
-    return $wp_test_expectations['categories'][$id];
+  	if (isset($wp_test_expectations['categories'][$id])) {
+	    return $wp_test_expectations['categories'][$id];
+  	}
   }
 }
 
@@ -1144,7 +1146,9 @@ function next_posts_link($link_text) {
  */
 function get_template_directory() {
   global $wp_test_expectations;
-  return $wp_test_expectations['theme']['template_directory'];
+  if (isset($wp_test_expectations['theme']['template_directory'])) {
+	  return $wp_test_expectations['theme']['template_directory'];
+  }
 }
 
 /**
