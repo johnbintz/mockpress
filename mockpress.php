@@ -133,6 +133,15 @@ function untrailingslashit($string) {
 }
 
 /**
+ * Add a trailing slash to a string if it does not exist.
+ * @param string $string The string to which a trailing slash should be added.
+ * @return string The string with a trailing slash added, if necessary.
+ */
+function trailingslashit($string) {
+  return preg_replace('#([^/])$#', '\1/', $string);
+}
+
+/**
  * Get GMT string from date string.
  * Currently does nothing.
  * @param string $date_string The date string to convert.
