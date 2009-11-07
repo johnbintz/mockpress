@@ -242,6 +242,7 @@ function add_category($id, $object) {
   if (is_object($object)) {
     if (is_numeric($id)) {
       $object->cat_ID = $object->term_id = (int)$id;
+      if (!isset($object->parent)) { $object->parent = 0; }
       $wp_test_expectations['categories'][$id] = $object;
     } else {
       trigger_error("ID must be numeric");
