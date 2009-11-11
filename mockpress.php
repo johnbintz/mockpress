@@ -8,6 +8,7 @@
 $wp_test_expectations = array();
 
 require_once('includes/cache.php');
+require_once('includes/media.php');
 
 /**
  * Reset the WordPress test expectations.
@@ -44,7 +45,8 @@ function _reset_wp() {
     'children' => array(),
     'current_user' => null,
     'users' => array(),
-    'user_meta' => array()
+    'user_meta' => array(),
+    'image_downsize' => array()
   );
 
   wp_cache_init();
