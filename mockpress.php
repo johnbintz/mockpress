@@ -135,6 +135,15 @@ function untrailingslashit($string) {
 }
 
 /**
+ * Add a trailing slash to a string if it does not exist.
+ * @param string $string The string to which a trailing slash should be added.
+ * @return string The string with a trailing slash added, if necessary.
+ */
+function trailingslashit($string) {
+  return preg_replace('#([^/])$#', '\1/', $string);
+}
+
+/**
  * Get GMT string from date string.
  * Currently does nothing.
  * @param string $date_string The date string to convert.
@@ -254,7 +263,9 @@ function get_category($id) {
   if (!isset($wp_test_expectations['categories'])) {
     return new WP_Error();
   } else {
-    return $wp_test_expectations['categories'][$id];
+  	if (isset($wp_test_expectations['categories'][$id])) {
+	    return $wp_test_expectations['categories'][$id];
+  	}
   }
 }
 
@@ -933,6 +944,15 @@ function _set_template_directory($dir) {
 }
 
 /**
+ * Set the child theme's directory.
+ * @param string $dir The template directory.
+ */
+function _set_stylesheet_directory($dir) {
+  global $wp_test_expectations;
+  $wp_test_expectations['theme']['stylesheet_directory'] = $dir;
+}
+
+/**
  * Set a 'current' expectation, such as if the current page load is an RSS feed.
  * @param string $field The expectation to set.
  * @param mixed $value The value of the expectation. Usually a boolean.
@@ -1146,7 +1166,20 @@ function next_posts_link($link_text) {
  */
 function get_template_directory() {
   global $wp_test_expectations;
-  return $wp_test_expectations['theme']['template_directory'];
+  if (isset($wp_test_expectations['theme']['template_directory'])) {
+	  return $wp_test_expectations['theme']['template_directory'];
+  }
+}
+
+/**
+ * Get the child theme's root directory.
+ * @return string The child theme's root directory.
+ */
+function get_stylesheet_directory() {
+  global $wp_test_expectations;
+  if (isset($wp_test_expectations['theme']['stylesheet_directory'])) {
+	  return $wp_test_expectations['theme']['stylesheet_directory'];
+  }
 }
 
 /**
