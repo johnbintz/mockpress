@@ -641,8 +641,8 @@ function apply_filters() {
       }
     }
   }
-  if (count($parameters) == 1) { $parameters = reset($parameters); }
-  return $parameters;
+  
+  return reset($parameters);
 }
 
 /**
