@@ -30,6 +30,7 @@ Built from http://github.com/johnbintz/mockpress
    <file name="README" role="data" />
    <dir name="includes">
      <file name="cache.php" role="php" />
+     <file name="media.php" role="php" />
    </dir>
   </dir>
  </contents>

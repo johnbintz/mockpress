@@ -8,6 +8,7 @@
 $wp_test_expectations = array();
 
 require_once('includes/cache.php');
+require_once('includes/media.php');
 
 /**
  * Reset the WordPress test expectations.
@@ -19,10 +20,10 @@ function _reset_wp() {
     'categories' => array(),
     'post_categories' => array(),
     'get_posts' => array(),
+    'admin_pages' => array(),
     'pages' => array(),
     'actions' => array(),
     'filters' => array(),
-    'posts' => array(),
     'post_meta' => array(),
     'themes' => array(),
     'plugin_domains' => array(),
@@ -37,14 +38,15 @@ function _reset_wp() {
     ),
     'plugin_data' => array(),
     'theme' => array(
-      'posts' => array()    
+      'posts' => array()
     ),
     'bloginfo' => array(),
     'user_capabilities' => array(),
     'children' => array(),
     'current_user' => null,
     'users' => array(),
-    'user_meta' => array()
+    'user_meta' => array(),
+    'image_downsize' => array()
   );
 
   wp_cache_init();
@@ -72,7 +74,7 @@ function get_option($key) {
       return false;
     }
   } else {
-    return false; 
+    return false;
   }
 }
 
@@ -98,10 +100,10 @@ function update_option($key, $value) {
       }
     }
   } else {
-    return false; 
+    return false;
   }
 }
-                                    
+
 /**
  * Delete an option from the WP Options table.
  * @param string $key The option to delete.
@@ -117,10 +119,10 @@ function delete_option($key) {
       return false;
     }
   } else {
-    return false; 
+    return false;
   }
 }
- 
+
 /** String Utility Functions **/
 
 /**
@@ -165,7 +167,7 @@ function __($string, $namespace = 'default') {
  * Echo an internationalized string.
  * @param string $string The string to check for i18n.
  * @param string $namespace The namespace to check.
- */ 
+ */
 function _e($string, $namespace = 'default') {
   echo __($string, $namespace);
 }
@@ -192,7 +194,7 @@ function __ngettext($single, $plural, $number, $domain) {
  * @return string The correct string.
  */
 function _n($single, $plural, $number, $domain) {
-  return ($number == 1) ? $single : $plural;  
+  return ($number == 1) ? $single : $plural;
 }
 
 /**
@@ -226,7 +228,7 @@ function maybe_unserialize($data) {
   if (is_serialized($data)) {
     if (($gm = unserialize($data)) !== false) { return $gm; }
   }
-  return $data; 
+  return $data;
 }
 
 /** Categories **/
@@ -248,7 +250,7 @@ function add_category($id, $object) {
       trigger_error("ID must be numeric");
     }
   } else {
-    trigger_error("Category provided must be an object"); 
+    trigger_error("Category provided must be an object");
   }
 }
 
@@ -284,13 +286,13 @@ function get_all_category_ids() {
  */
 function get_cat_name($id) {
   global $wp_test_expectations;
-  if (isset($wp_test_expectations['categories'][$id])) {  
+  if (isset($wp_test_expectations['categories'][$id])) {
     return $wp_test_expectations['categories'][$id]->name;
   } else {
-    return null; 
+    return null;
   }
 }
-   
+
 /**
  * Set a post's categories.
  * @param int $post_id The post to modify.
@@ -344,25 +346,25 @@ function wp_get_post_tags($post_id) {
     return array();
   } else {
     return $wp_test_expectations['post_tags'][$post_id];
-  }  
+  }
 }
 
 /**
  * Set a post's tags.
  * @param int $post_id The post to modify.
  * @param array $tags The tags to set for this post. Note that these should be text strings and not objects. E_USER_WARNING will be raised if you don't pass in a string.
- * @raises E_USER_WARNING if an object other than a string exists in the $tags array. 
+ * @raises E_USER_WARNING if an object other than a string exists in the $tags array.
  */
 function wp_set_post_tags($post_id, $tags) {
   global $wp_test_expectations;
   $tags = (array)$tags;
   foreach ($tags as $tag) {
-    if (!is_string($tag)) { trigger_error("All tags sent to wp_set_post_tags() need to be strings."); } 
+    if (!is_string($tag)) { trigger_error("All tags sent to wp_set_post_tags() need to be strings."); }
   }
   $wp_test_expectations['post_tags'][$post_id] = array();
   foreach ($tags as $tag) {
     $wp_test_expectations['post_tags'][$post_id][] = (object)array(
-      'name' => $tag, 'slug' => $tag 
+      'name' => $tag, 'slug' => $tag
     );
   }
 }
@@ -418,7 +420,7 @@ function _set_up_get_posts_response($query, $result) {
 function get_posts($query) {
   global $wp_test_expectations;
   if (!is_string($query)) { $query = serialize($query); }
-  
+
   if (isset($wp_test_expectations['get_posts'][$query])) {
     return $wp_test_expectations['get_posts'][$query];
   } else {
@@ -445,7 +447,7 @@ function wp_insert_post($array) {
     }
     $array['ID'] = $id;
   }
-  $wp_test_expectations['posts'][$id] = (object)$array;    
+  $wp_test_expectations['posts'][$id] = (object)$array;
   return $id;
 }
 
@@ -456,7 +458,7 @@ function wp_insert_post($array) {
 function wp_update_post($object) {
   global $wp_test_expectations;
   if (is_array($object)) { $object = (object)$object; }
-  
+
   if (isset($wp_test_expectations['posts'][$object->ID])) {
     $wp_test_expectations['posts'][$object->ID] = $object;
   }
@@ -470,11 +472,11 @@ function wp_update_post($object) {
  */
 function get_post($id, $output = "") {
   global $wp_test_expectations;
-  
+
   if (isset($wp_test_expectations['posts'][$id])) {
     return $wp_test_expectations['posts'][$id];
   } else {
-    return null; 
+    return null;
   }
 }
 
@@ -504,7 +506,7 @@ function get_post_meta($post_id, $field, $single = false) {
 
   if (!isset($wp_test_expectations['post_meta'][$post_id])) { return ""; }
   if (!isset($wp_test_expectations['post_meta'][$post_id][$field])) { return ""; }
-  
+
   return ($single) ? $wp_test_expectations['post_meta'][$post_id][$field] : array($wp_test_expectations['post_meta'][$post_id][$field]);
 }
 
@@ -573,6 +575,17 @@ function get_children($options) {
   return $wp_test_expectations['children'][md5(serialize($options))];
 }
 
+/** Pages **/
+
+function get_pages() {
+	global $wp_test_expectations;
+	$pages = array();
+	foreach ($wp_test_expectations['posts'] as $post) {
+		if ($post->post_type == 'page') { $pages[] = $post; }
+	}
+	return $pages;
+}
+
 /** Core **/
 
 /**
@@ -586,7 +599,7 @@ function add_action($name, $callback) {
 }
 
 function do_action($name) {
-  
+
 }
 
 /**
@@ -614,7 +627,7 @@ function add_filter($name, $callback, $priority = 10, $parameters = 2) {
  */
 function apply_filters() {
   global $wp_test_expectations;
-  
+
   $parameters = func_get_args();
   $name = array_shift($parameters);
 
@@ -640,8 +653,8 @@ function apply_filters() {
       }
     }
   }
-  if (count($parameters) == 1) { $parameters = reset($parameters); }
-  return $parameters;
+
+  return reset($parameters);
 }
 
 /**
@@ -671,9 +684,9 @@ function add_options_page($page_title, $menu_title, $access_level, $file, $funct
 function add_menu_page($page_title, $menu_title, $access_level, $file, $function, $icon) {
   global $wp_test_expectations;
   $parent = "";
-  
-  $wp_test_expectations['pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function', 'icon');
-  
+
+  $wp_test_expectations['admin_pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function', 'icon');
+
   return "hook name";
 }
 
@@ -682,9 +695,9 @@ function add_menu_page($page_title, $menu_title, $access_level, $file, $function
  */
 function add_submenu_page($parent, $page_title, $menu_title, $access_level, $file, $function = "") {
   global $wp_test_expectations;
-  
-  $wp_test_expectations['pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function');
-  
+
+  $wp_test_expectations['admin_pages'][] = compact('parent', 'page_title', 'menu_title', 'access_level', 'file', 'function');
+
   return "hook name";
 }
 
@@ -1358,7 +1371,7 @@ function update_usermeta($id, $key, $value) {
 
   if (!is_numeric($id)) { return false; }
   $key = preg_replace('#^[^a-z0-9_]#i', '', $key);
-  
+
   if (!isset($wp_test_expectations['user_meta'][$id])) {
     $wp_test_expectations['user_meta'][$id] = array();
   }
