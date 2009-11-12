@@ -81,7 +81,7 @@ function wp_cache_get($id, $group = '') {
 }
 
 function wp_cache_init() {
-  $GLOBALS['wp_object_cache'] =& new WP_Object_Cache();
+  $GLOBALS['wp_object_cache'] = new WP_Object_Cache();
 }
 
 function wp_cache_replace($id, $data, $group = '', $expire = 0) {
