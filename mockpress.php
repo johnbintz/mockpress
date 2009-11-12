@@ -999,7 +999,7 @@ function is_admin() {
 
 /**
  * True if the current post is a page.
- * @return unknown_type
+ * @return boolean True if it's a page.
  */
 function is_page() {
 	global $post;
