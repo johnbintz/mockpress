@@ -123,6 +123,11 @@ function delete_option($key) {
   }
 }
 
+function get_alloptions() {
+	global $wp_test_expectations;
+	return $wp_test_expectations['options'];
+}
+
 /** String Utility Functions **/
 
 /**

@@ -14,4 +14,9 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(array((object)array('ID' => 2, 'post_type' => 'page')), get_pages());
 	}
+
+	function testGetAllOptions() {
+		update_option('test', 'value');
+		$this->assertEquals(array('test' => 'value'), get_alloptions());
+	}
 }
