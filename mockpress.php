@@ -486,6 +486,13 @@ function get_post($id, $output = "") {
 }
 
 /**
+ * Set up post data in a variety of global variables.
+ * TODO This is just a placeholder, needs proper code set up eventuall.
+ * @param object $post A post to set up.
+ */
+function setup_postdata($post) {}
+
+/**
  * Update a post's custom field.
  * @param int $post_id The post's ID.
  * @param string $field The field to set.

@@ -19,4 +19,23 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		update_option('test', 'value');
 		$this->assertEquals(array('test' => 'value'), get_alloptions());
 	}
+
+	function providerTestGetOption() {
+		return array(
+			array(false, false),
+			array(array('test'), false),
+			array('test', 'test2')
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestGetOption
+	 */
+	function testGetOption($key, $expected_value) {
+		global $wp_test_expectations;
+
+		$wp_test_expectations['options'] = array('test' => 'test2');
+
+		$this->assertEquals($expected_value, get_option($key));
+	}
 }
