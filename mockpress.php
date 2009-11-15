@@ -487,7 +487,7 @@ function get_post($id, $output = "") {
 
 /**
  * Set up post data in a variety of global variables.
- * TODO This is just a placeholder, needs proper code set up eventuall.
+ * TODO This is just a placeholder, needs proper code set up eventually.
  * @param object $post A post to set up.
  */
 function setup_postdata($post) {}
