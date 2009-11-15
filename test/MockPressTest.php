@@ -5,7 +5,9 @@ require_once(dirname(__FILE__) . '/../mockpress.php');
 
 class MockPressTest extends PHPUnit_Framework_TestCase {
 	function setUp() {
+		global $post;
 		_reset_wp();
+		unset($post);
 	}
 
 	function testGetPages() {
@@ -37,5 +39,23 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$wp_test_expectations['options'] = array('test' => 'test2');
 
 		$this->assertEquals($expected_value, get_option($key));
+	}
+
+	function providerTestIsPage() {
+		return array(
+			array(false, false),
+			array((object)array('post_type' => 'post'), false),
+			array((object)array('post_type' => 'page'), true),
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestIsPage
+	 */
+	function testIsPage($p, $expected_result) {
+		global $post;
+
+		$post = $p;
+		$this->assertEquals($expected_result, is_page());
 	}
 }

@@ -1005,6 +1005,18 @@ function is_admin() {
 }
 
 /**
+ * True if the current post is a page.
+ * @return boolean True if it's a page.
+ */
+function is_page() {
+	global $post;
+	if (!empty($post)) {
+		return $post->post_type == "page";
+	}
+	return false;
+}
+
+/**
  * Get plugin data (author, version, etc.)
  * @param string $filepath The path to the file which contains plugin data.
  */
