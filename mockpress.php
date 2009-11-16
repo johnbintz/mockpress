@@ -22,6 +22,7 @@ function _reset_wp() {
     'get_posts' => array(),
     'admin_pages' => array(),
     'pages' => array(),
+  	'posts' => array(),
     'actions' => array(),
     'filters' => array(),
     'post_meta' => array(),
