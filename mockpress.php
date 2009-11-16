@@ -128,6 +128,10 @@ function get_alloptions() {
 	return $wp_test_expectations['options'];
 }
 
+function wp_load_alloptions() {
+	return get_alloptions();
+}
+
 /** String Utility Functions **/
 
 /**
