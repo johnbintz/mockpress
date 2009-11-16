@@ -606,7 +606,9 @@ function get_pages() {
 	if (isset($wp_test_expectations['posts'])) {
 		if (is_array($wp_test_expectations['posts'])) {
 			foreach ($wp_test_expectations['posts'] as $post) {
-				if ($post->post_type == 'page') { $pages[] = $post; }
+				if (isset($post->post_type)) {
+					if ($post->post_type == 'page') { $pages[] = $post; }
+				}
 			}
 		}
 	}
