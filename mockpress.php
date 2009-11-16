@@ -597,8 +597,12 @@ function get_children($options) {
 function get_pages() {
 	global $wp_test_expectations;
 	$pages = array();
-	foreach ($wp_test_expectations['posts'] as $post) {
-		if ($post->post_type == 'page') { $pages[] = $post; }
+	if (isset($wp_test_expectations['posts'])) {
+		if (is_array($wp_test_expectations['posts'])) {
+			foreach ($wp_test_expectations['posts'] as $post) {
+				if ($post->post_type == 'page') { $pages[] = $post; }
+			}
+		}
 	}
 	return $pages;
 }
