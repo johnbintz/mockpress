@@ -9,6 +9,7 @@ $wp_test_expectations = array();
 
 require_once('includes/cache.php');
 require_once('includes/media.php');
+require_once('includes/filtering.php');
 
 /**
  * Reset the WordPress test expectations.
