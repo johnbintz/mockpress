@@ -450,12 +450,18 @@ function wp_insert_post($array) {
   if (isset($array['ID'])) {
     $id = $array['ID'];
   } else {
-    if (count($wp_test_expectations['posts']) == 0) {
-      $id = 1;
-    } else {
-      $id = max(array_keys($wp_test_expectations['posts'])) + 1;
+    $id = 1;
+    if (isset($wp_test_expectations['posts'])) {
+    	if (is_array($wp_test_expectations['posts'])) {
+    		if (!empty($wp_test_expectations['posts'])) {
+    			$id = max(array_keys($wp_test_expectations['posts'])) + 1;
+    		}
+    	}
     }
     $array['ID'] = $id;
+  }
+  if (!isset($wp_test_expectations['posts'])) {
+  	$wp_test_expectations['posts'] = array();
   }
   $wp_test_expectations['posts'][$id] = (object)$array;
   return $id;
