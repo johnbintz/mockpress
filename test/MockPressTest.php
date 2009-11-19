@@ -58,4 +58,40 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$post = $p;
 		$this->assertEquals($expected_result, is_page());
 	}
+
+	function providerTestGetTheTitle() {
+		return array(
+			array(null, 'test'),
+			array(1, 'test'),
+			array(2, false),
+			array((object)array('ID' => 1), 'test'),
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestGetTheTitle
+	 */
+	function testGetTheTitle($post_to_use = null, $expected_title) {
+		global $post;
+		$post = (object)array('ID' => 1, 'post_title' => 'test');
+		wp_insert_post($post);
+		$this->assertEquals($expected_title, get_the_title($post_to_use));
+	}
+
+	function providerTestGetPost() {
+		return array(
+			array(null, null),
+			array(1, (object)array('ID' => 1)),
+			array(2, null),
+			array((object)array('ID' => 1), (object)array('ID' => 1))
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestGetPost
+	 */
+	function testGetPost($input, $expected_output) {
+		wp_insert_post(array('ID' => 1));
+		$this->assertEquals($expected_output, get_post($input));
+	}
 }

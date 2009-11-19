@@ -481,6 +481,16 @@ function wp_update_post($object) {
   }
 }
 
+function _ensure_post_id($object) {
+	if (!empty($object)) {
+		if (is_object($object)) { $object = (array)$object; }
+		if (is_array($object)) {
+			if (isset($object['ID'])) { $object = $object['ID']; }
+		}
+	}
+	return (int)$object;
+}
+
 /**
  * Get a post from the database.
  * @param int $id The post to retrieve.
@@ -490,6 +500,7 @@ function wp_update_post($object) {
 function get_post($id, $output = "") {
   global $wp_test_expectations;
 
+  $id = _ensure_post_id($id);
   if (isset($wp_test_expectations['posts'][$id])) {
     return $wp_test_expectations['posts'][$id];
   } else {
@@ -1131,6 +1142,23 @@ function the_permalink() {
 function the_title() {
   global $post;
   echo $post->post_title;
+}
+
+/**
+ * Get the title of the current post.
+ */
+function get_the_title($override_post = null) {
+	global $post;
+
+	$post_to_use = is_null($override_post) ? $post : $override_post;
+	$post_to_use = get_post($post_to_use);
+
+	if (is_object($post_to_use)) {
+		if (isset($post_to_use->post_title)) {
+			return $post_to_use->post_title;
+		}
+	}
+	return '';
 }
 
 /**
