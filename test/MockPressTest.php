@@ -94,4 +94,18 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		wp_insert_post(array('ID' => 1));
 		$this->assertEquals($expected_output, get_post($input));
 	}
+
+	function testDeleteCategory() {
+		update_option('default_category', 1);
+		add_category(1, (object)array('slug' => 'test'));
+		add_category(2, (object)array('slug' => 'test-2'));
+
+		$this->assertFalse(wp_delete_category(1));
+		$this->assertTrue(wp_delete_category(2));
+
+		$result = get_category(1);
+		$this->assertTrue(isset($result->term_id));
+		$result = get_category(2);
+		$this->assertFalse(isset($result->term_id));
+	}
 }

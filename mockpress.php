@@ -282,6 +282,22 @@ function get_category($id) {
   }
 }
 
+function wp_delete_category($id) {
+  global $wp_test_expectations;
+
+  if (isset($wp_test_expectations['categories'][$id])) {
+  	$ok = true;
+  	if (($value = get_option('default_category')) !== false) {
+  		$ok = ($value != $id);
+  	}
+  	if ($ok) {
+			unset($wp_test_expectations['categories'][$id]);
+			return true;
+  	}
+  }
+  return false;
+}
+
 /**
  * Get all category IDs.
  * @return array All valid category IDs.
