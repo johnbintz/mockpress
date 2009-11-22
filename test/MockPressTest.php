@@ -108,4 +108,14 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$result = get_category(2);
 		$this->assertFalse(isset($result->term_id));
 	}
+
+	function testInsertCategory() {
+		$result = get_category(1);
+		$this->assertFalse(isset($result->term_id));
+
+		wp_insert_category(array('slug' => 'test'));
+
+		$result = get_category(1);
+		$this->assertTrue(isset($result->term_id));
+	}
 }

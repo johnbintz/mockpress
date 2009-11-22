@@ -266,6 +266,25 @@ function add_category($id, $object) {
   }
 }
 
+function wp_insert_category($catarr) {
+  global $wp_test_expectations;
+
+	if (is_object($catarr)) { $catarr = (array)$catarr; }
+	if (is_array($catarr)) {
+		if (empty($catarr['cat_ID'])) {
+			$max_id = 1;
+			foreach ($wp_test_expectations['categories'] as $category) {
+				if (isset($category->cat_ID)) {
+					$max_id = max($max_id, $category->cat_ID + 1);
+				}
+			}
+			add_category($max_id, (object)$catarr);
+			return $max_id;
+		}
+	}
+	return 0;
+}
+
 /**
  * Get a category.
  * @param int $id The category ID to retrieve.
