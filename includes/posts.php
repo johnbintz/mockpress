@@ -95,6 +95,10 @@ function wp_delete_post($id) {
 function get_post($id, $output = "") {
   global $wp_test_expectations;
 
+  if (is_object($id)) {
+  	if (isset($id->ID)) { $id = $id->ID; }
+  }
+
   if (isset($wp_test_expectations['posts'][$id])) {
     return $wp_test_expectations['posts'][$id];
   } else {

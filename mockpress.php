@@ -10,6 +10,7 @@ $wp_test_expectations = array();
 require_once('includes/cache.php');
 require_once('includes/media.php');
 require_once('includes/posts.php');
+require_once('includes/filtering.php');
 
 /**
  * Reset the WordPress test expectations.
@@ -23,6 +24,7 @@ function _reset_wp() {
     'get_posts' => array(),
     'admin_pages' => array(),
     'pages' => array(),
+  	'posts' => array(),
     'actions' => array(),
     'filters' => array(),
     'post_meta' => array(),
@@ -414,8 +416,14 @@ function get_tags() {
 function get_pages() {
 	global $wp_test_expectations;
 	$pages = array();
-	foreach ($wp_test_expectations['posts'] as $post) {
-		if ($post->post_type == 'page') { $pages[] = $post; }
+	if (isset($wp_test_expectations['posts'])) {
+		if (is_array($wp_test_expectations['posts'])) {
+			foreach ($wp_test_expectations['posts'] as $post) {
+				if (isset($post->post_type)) {
+					if ($post->post_type == 'page') { $pages[] = $post; }
+				}
+			}
+		}
 	}
 	return $pages;
 }
@@ -935,6 +943,23 @@ function the_permalink() {
 function the_title() {
   global $post;
   echo $post->post_title;
+}
+
+/**
+ * Get the title of the current post.
+ */
+function get_the_title($override_post = null) {
+	global $post;
+
+	$post_to_use = is_null($override_post) ? $post : $override_post;
+	$post_to_use = get_post($post_to_use);
+
+	if (is_object($post_to_use)) {
+		if (isset($post_to_use->post_title)) {
+			return $post_to_use->post_title;
+		}
+	}
+	return '';
 }
 
 /**
