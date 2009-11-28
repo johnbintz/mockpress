@@ -155,6 +155,16 @@ function trailingslashit($string) {
   return preg_replace('#([^/])$#', '\1/', $string);
 }
 
+function user_trailingslashit($string, $type_of_url = '') {
+	$which = 'untrailingslashit';
+	if ($permalink_structure = get_option('permalink_structure')) {
+		if (preg_match('#/$#', $permalink_structure) > 0) {
+			$which = 'trailingslashit';
+		}
+	}
+	return call_user_func($which, $string);
+}
+
 /**
  * Get GMT string from date string.
  * Currently does nothing.

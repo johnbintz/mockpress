@@ -118,4 +118,21 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$result = get_category(1);
 		$this->assertTrue(isset($result->term_id));
 	}
+
+	function providerTestUserTrailingSlashIt() {
+		return array(
+			array('', false),
+			array('test', false),
+			array('test/', true),
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestUserTrailingSlashIt
+	 */
+	function testUserTrailingSlashIt($permalink_structure_option, $expecting_slash) {
+		update_option('permalink_structure', $permalink_structure_option);
+
+		$this->assertEquals($expecting_slash, preg_match('#/$#', user_trailingslashit('test')) > 0);
+	}
 }
