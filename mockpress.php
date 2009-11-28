@@ -1134,7 +1134,7 @@ function bloginfo($field) {
  * @param string $display The display method.
  * @return string The bloginfo field value.
  */
-function get_bloginfo($field, $display) {
+function get_bloginfo($field, $filter = 'raw') {
   global $wp_test_expectations;
   return $wp_test_expectations['bloginfo'][$field];
 }
