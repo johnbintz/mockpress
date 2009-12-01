@@ -135,4 +135,11 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($expecting_slash, preg_match('#/$#', user_trailingslashit('test')) > 0);
 	}
+
+	function testGetTheID() {
+		global $post;
+		$post->ID = 10;
+
+		$this->assertEquals(10, get_the_ID());
+	}
 }

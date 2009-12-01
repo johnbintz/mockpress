@@ -1078,6 +1078,14 @@ function the_category($separator) {
 }
 
 /**
+ * Get the ID of the current post
+ */
+function get_the_ID() {
+	global $post;
+	return $post->ID;
+}
+
+/**
  * If there are more posts, print a link that links to the subsequent posts.
  * @param string $link_test The text for the link.
  */
