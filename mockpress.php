@@ -1389,8 +1389,8 @@ class WP_Widget {
   function update($new_instance, $old_instance) {}
   function form($instance) {}
 
-  function get_field_id($field_name) { return "$id-$field_name"; }
-  function get_field_name($field_name) { return "$id[$field_name]"; }
+  function get_field_id($field_name) { return $this->id . "-$field_name"; }
+  function get_field_name($field_name) { return $this->id . "[$field_name]"; }
 }
 
 function register_widget() {}
