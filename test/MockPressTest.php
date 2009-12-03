@@ -151,4 +151,11 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 	function testWPParseArgs($input, $defaults, $expected_output) {
 		$this->assertEquals($expected_output, wp_parse_args($input, $defaults));
 	}
+
+	function testGetTheID() {
+		global $post;
+		$post->ID = 10;
+
+		$this->assertEquals(10, get_the_ID());
+	}
 }
