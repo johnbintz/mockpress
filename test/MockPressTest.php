@@ -135,4 +135,20 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($expecting_slash, preg_match('#/$#', user_trailingslashit('test')) > 0);
 	}
+
+	function providerTestWPParseArgs() {
+		return array(
+			array('', array('test' => 'test'), array('test' => 'test')),
+			array(array(), array('test' => 'test'), array('test' => 'test')),
+			array(array('test' => 'test2'), array('test' => 'test'), array('test' => 'test2')),
+			array('test=test2', array('test' => 'test'), array('test' => 'test2')),
+		);
+	}
+
+	/**
+   * @dataProvider providerTestWPParseArgs
+	 */
+	function testWPParseArgs($input, $defaults, $expected_output) {
+		$this->assertEquals($expected_output, wp_parse_args($input, $defaults));
+	}
 }

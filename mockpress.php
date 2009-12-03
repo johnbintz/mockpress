@@ -556,6 +556,24 @@ function _set_filter_expectation($name, $result) {
   $wp_test_expectations['filters'][$name] = array(true, $result);
 }
 
+/**
+ * Ensure that input has default values injected into it.
+ * @param string|array $input The input values.
+ * @param array $defaults The default values.
+ * @return array The default values with the provided input merged overtop.
+ */
+function wp_parse_args($input, $defaults) {
+	if (is_string($input)) {
+		parse_str($input, $r);
+		$input = $r;
+	}
+	if (is_array($input)) {
+		return array_merge($defaults, $input);
+	} else {
+		return $defaults;
+	}
+}
+
 /** Admin **/
 
 /**
