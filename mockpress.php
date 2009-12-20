@@ -489,6 +489,8 @@ function do_action($name) {
 
 }
 
+function add_shortcode($code, $callback) {}
+
 /**
  * Attach a callback to a filter hook.
  * @param string $name The hook to attach to.
