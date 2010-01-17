@@ -295,7 +295,9 @@ function wp_insert_category($catarr) {
 				'category_nicename' => 'slug',
 				'category_parent' => 'parent'
 			) as $old => $new) {
-				$catarr[$new] = $catarr[$old];
+				if (isset($catarr[$old])) {
+					$catarr[$new] = $catarr[$old];
+				}
 			}
 
 			add_category($max_id, (object)$catarr);
