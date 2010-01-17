@@ -288,6 +288,16 @@ function wp_insert_category($catarr) {
 					$max_id = max($max_id, $category->cat_ID + 1);
 				}
 			}
+
+			foreach (array(
+				'cat_name' => 'name',
+				'category_description' => 'description',
+				'category_nicename' => 'slug',
+				'category_parent' => 'parent'
+			) as $old => $new) {
+				$catarr[$new] = $catarr[$old];
+			}
+
 			add_category($max_id, (object)$catarr);
 			return $max_id;
 		}

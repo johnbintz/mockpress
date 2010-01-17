@@ -113,10 +113,32 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$result = get_category(1);
 		$this->assertFalse(isset($result->term_id));
 
-		wp_insert_category(array('slug' => 'test'));
+		wp_insert_category(array(
+			'name' => 'go away',
+			'description' => 'go away',
+			'slug' => 'go away',
+			'parent' => 'go away',
+			'cat_name' => 'name',
+			'category_description' => 'description',
+			'category_nicename' => 'slug',
+			'category_parent' => 'parent'
+		));
 
 		$result = get_category(1);
 		$this->assertTrue(isset($result->term_id));
+
+		foreach (array(
+			'name' => 'name',
+			'description' => 'description',
+			'slug' => 'slug',
+			'parent' => 'parent',
+			'cat_name' => 'name',
+			'category_description' => 'description',
+			'category_nicename' => 'slug',
+			'category_parent' => 'parent'
+		) as $field => $value) {
+			$this->assertEquals($value, $result->{$field});
+		}
 	}
 
 	function providerTestUserTrailingSlashIt() {
