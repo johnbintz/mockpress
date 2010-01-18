@@ -32,6 +32,7 @@ function _reset_wp() {
     'plugin_domains' => array(),
     'enqueued' => array(),
     'all_tags' => array(),
+  	'post_tags' => array(),
     'sidebar_widgets' => array(),
     'widget_controls' => array(),
     'nonce' => array(),
