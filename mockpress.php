@@ -1223,7 +1223,11 @@ function current_user_can() {
   $capabilities = func_get_args();
   $all_valid = true;
   foreach ($capabilities as $capability) {
-    if (!$wp_test_expectations['user_capabilities'][$capability]) { $all_valid = false; break; }
+  	if (isset($wp_test_expectations['user_capabilities'][$capability])) {
+    	if (!$wp_test_expectations['user_capabilities'][$capability]) { $all_valid = false; break; }
+  	} else {
+  		$all_valid = false;
+  	}
   }
   return $all_valid;
 }

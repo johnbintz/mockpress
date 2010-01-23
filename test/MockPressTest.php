@@ -180,4 +180,24 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(10, get_the_ID());
 	}
+
+	function providerTestCurrentUserCan() {
+		return array(
+			array(array('one'), true),
+			array(array('two'), true),
+			array(array('one', 'two'), true),
+			array(array('one', 'three'), false),
+			array(array('three'), false),
+			array(array(), true),
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestCurrentUserCan
+	 */
+	function testCurrentUserCan($capabilities, $expected_result) {
+		_set_user_capabilities('one', 'two');
+
+		$this->assertEquals($expected_result, call_user_func_array('current_user_can', $capabilities));
+	}
 }
