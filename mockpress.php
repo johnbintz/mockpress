@@ -38,7 +38,8 @@ function _reset_wp() {
     'nonce' => array(),
     'wp_widgets' => array(),
     'current' => array(
-      'is_feed' => false
+      'is_feed' => false,
+  		'is_home' => false
     ),
     'plugin_data' => array(),
     'theme' => array(
