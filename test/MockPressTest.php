@@ -200,4 +200,9 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($expected_result, call_user_func_array('current_user_can', $capabilities));
 	}
+
+	function testIsHome() {
+		_set_current_option('is_home', true);
+		$this->assertTrue(is_home());
+	}
 }

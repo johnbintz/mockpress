@@ -913,6 +913,15 @@ function is_admin() {
 }
 
 /**
+ * True if the current user is on the home page.
+ * @return boolean True if on home page.
+ */
+function is_home() {
+  global $wp_test_expectations;
+  return $wp_test_expectations['current']['is_home'];
+}
+
+/**
  * True if the current post is a page.
  * @return boolean True if it's a page.
  */
