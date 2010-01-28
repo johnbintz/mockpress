@@ -205,4 +205,19 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		_set_current_option('is_home', true);
 		$this->assertTrue(is_home());
 	}
+
+	function providerTestAddCategoryErrors() {
+		return array(
+			array('string', (object)array()),
+			array(1, array())
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestAddCategoryErrors
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	function testAddCategoryErrors($id, $object) {
+		add_category($id, $object);
+	}
 }

@@ -269,7 +269,7 @@ function add_category($id, $object) {
     if (is_numeric($id)) {
       $object->cat_ID = $object->term_id = (int)$id;
       if (!isset($object->parent)) { $object->parent = 0; }
-      $wp_test_expectations['categories'][$id] = $object;
+      $wp_test_expectations['categories'][$id] = (object)_make_cat_compat((array)$object);
     } else {
       trigger_error("ID must be numeric");
     }
@@ -291,22 +291,26 @@ function wp_insert_category($catarr) {
 				}
 			}
 
-			foreach (array(
-				'cat_name' => 'name',
-				'category_description' => 'description',
-				'category_nicename' => 'slug',
-				'category_parent' => 'parent'
-			) as $old => $new) {
-				if (isset($catarr[$old])) {
-					$catarr[$new] = $catarr[$old];
-				}
-			}
-
-			add_category($max_id, (object)$catarr);
+			add_category($max_id, (object)_make_cat_compat($catarr));
 			return $max_id;
 		}
 	}
 	return 0;
+}
+
+function _make_cat_compat($catarr) {
+	foreach (array(
+		'cat_name' => 'name',
+		'category_description' => 'description',
+		'category_nicename' => 'slug',
+		'category_parent' => 'parent'
+	) as $old => $new) {
+		if (isset($catarr[$old])) {
+			$catarr[$new] = $catarr[$old];
+		}
+	}
+
+	return $catarr;
 }
 
 /**
