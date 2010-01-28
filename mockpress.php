@@ -503,6 +503,11 @@ function do_action($name) {
 
 }
 
+function remove_action($name, $callback) {
+  global $wp_test_expectations;
+  unset($wp_test_expectations['actions'][$name]);
+}
+
 function add_shortcode($code, $callback) {}
 
 /**
