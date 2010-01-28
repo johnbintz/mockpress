@@ -278,6 +278,11 @@ function add_category($id, $object) {
   }
 }
 
+/**
+ * Insert a new category.
+ * @param array $catarr The new category to insert.
+ * @return int The ID of the new category, or 0 if there was an error.
+ */
 function wp_insert_category($catarr) {
   global $wp_test_expectations;
 
@@ -298,6 +303,11 @@ function wp_insert_category($catarr) {
 	return 0;
 }
 
+/**
+ * Make category compatible with older WordPress code.
+ * @param array $catarr The category to modify.
+ * @return array The modified category.
+ */
 function _make_cat_compat($catarr) {
 	foreach (array(
 		'cat_name' => 'name',
@@ -311,6 +321,22 @@ function _make_cat_compat($catarr) {
 	}
 
 	return $catarr;
+}
+
+/**
+ * Retrieve a category by slug.
+ * @param string $slug The slug of the category to retrieve.
+ * @return object|false The retrieved category, or false if not found.
+ */
+function get_category_by_slug($slug) {
+  global $wp_test_expectations;
+
+  foreach ($wp_test_expectations['categories'] as $id => $info) {
+  	if ($info->slug == $slug) {
+  		return $info;
+  	}
+  }
+  return false;
 }
 
 /**

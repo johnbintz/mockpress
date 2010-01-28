@@ -220,4 +220,14 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 	function testAddCategoryErrors($id, $object) {
 		add_category($id, $object);
 	}
+
+	function testGetCategoryBySlug() {
+		add_category(1, (object)array('cat_name' => 'Test 123', 'category_nicename' => 'test-123'));
+		add_category(2, (object)array('cat_name' => 'Test 234', 'category_nicename' => 'test-234'));
+
+		$this->assertFalse(get_category_by_slug('test-345'));
+
+		$category = get_category_by_slug('test-123');
+		$this->assertEquals('Test 123', $category->name);
+	}
 }
