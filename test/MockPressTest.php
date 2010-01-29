@@ -239,4 +239,14 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals("2", $post);
 	}
+
+	function testGetThePermalink() {
+		wp_insert_post((object)array(
+			'ID' => 1,
+			'guid' => 'post-1'
+		));
+
+		$this->assertEquals('post-1', get_the_permalink(1));
+		$this->assertEquals('post-1', get_the_permalink((object)array('ID' => 1)));
+	}
 }
