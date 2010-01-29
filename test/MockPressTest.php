@@ -230,4 +230,13 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$category = get_category_by_slug('test-123');
 		$this->assertEquals('Test 123', $category->name);
 	}
+
+	function testSetupPostData() {
+		global $post;
+
+		$post = "1";
+		setup_postdata("2");
+
+		$this->assertEquals("2", $post);
+	}
 }
