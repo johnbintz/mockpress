@@ -1061,14 +1061,6 @@ function the_permalink() {
 }
 
 /**
- * Get the permalink for the provided $id (which can be a post object)
- */
-function get_the_permalink($id) {
-	$post = get_post($id);
-	return $post->guid;
-}
-
-/**
  * Echo the post title of the current Loop post.
  */
 function the_title() {

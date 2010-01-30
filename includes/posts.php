@@ -183,11 +183,22 @@ function post_exists($title, $content, $date) {
 
 /**
  * Get the permalink to the provided post.
- * @param object $post The post object.
+ * @param object $post The post object, ID, or 0 to use the current global $post.
  * @return string The permalink to the post.
  */
-function get_permalink($post) {
-  return $post->guid;
+function get_permalink($p = 0) {
+	global $post;
+	if (empty($p)) {
+		$target_post = $post;
+	} else {
+		$target_post = get_post($p);
+	}
+	if (is_object($target_post)) {
+		if (isset($target_post->guid)) {
+	  	return $target_post->guid;
+		}
+	}
+	return false;
 }
 
 /**
