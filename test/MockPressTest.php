@@ -257,4 +257,29 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals('post-1', get_permalink());
 	}
+
+	function providerTestGetPostCategories() {
+		return array(
+			array(null, array(2)),
+			array(1, array(2)),
+			array(2, array(3)),
+		);
+	}
+
+	/**
+	 * @dataProvider providerTestGetPostCategories
+	 */
+	function testGetPostCategories($post_id, $expected_categories) {
+		global $post;
+
+		$post = (object)array('ID' => 1);
+
+		wp_insert_post($post);
+		wp_insert_post((object)array('ID' => 2));
+
+		wp_set_post_categories(1, array(2));
+		wp_set_post_categories(2, array(3));
+
+		$this->assertEquals($expected_categories, wp_get_post_categories($post_id));
+	}
 }

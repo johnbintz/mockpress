@@ -410,8 +410,11 @@ function wp_set_post_categories($post_id, $categories) {
  * @param int $post_id The post to query.
  * @return array The categories for this post.
  */
-function wp_get_post_categories($post_id) {
-  global $wp_test_expectations;
+function wp_get_post_categories($post_id = null) {
+  global $wp_test_expectations, $post;
+  if (is_null($post_id)) {
+  	$post_id = $post->ID;
+  }
   if (!isset($wp_test_expectations['post_categories'][$post_id])) {
     return array();
   } else {
