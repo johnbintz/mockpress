@@ -282,4 +282,11 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($expected_categories, wp_get_post_categories($post_id));
 	}
+
+    function testEnqueueScript() {
+		global $wp_test_expectations;
+
+		wp_enqueue_script('test');
+		$this->assertTrue(_did_wp_enqueue_script('test'));
+    }
 }

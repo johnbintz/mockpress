@@ -30,7 +30,7 @@ function _reset_wp() {
     'post_meta' => array(),
     'themes' => array(),
     'plugin_domains' => array(),
-    'enqueued' => array(),
+    'enqueued_scripts' => array(),
     'all_tags' => array(),
   	'post_tags' => array(),
     'sidebar_widgets' => array(),
@@ -708,7 +708,7 @@ function load_plugin_textdomain($domain, $path) {
  */
 function wp_enqueue_script($script) {
   global $wp_test_expectations;
-  $wp_test_expectations['enqueued'][$script] = true;
+  $wp_test_expectations['enqueued_scripts'][$script] = true;
 }
 
 /**
@@ -718,7 +718,7 @@ function wp_enqueue_script($script) {
  */
 function _did_wp_enqueue_script($script) {
   global $wp_test_expectations;
-  return isset($wp_test_expectations['enqueued'][$script]);
+  return isset($wp_test_expectations['enqueued_scripts'][$script]);
 }
 
 /** Nonce **/
