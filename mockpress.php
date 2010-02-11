@@ -31,6 +31,7 @@ function _reset_wp() {
     'themes' => array(),
     'plugin_domains' => array(),
     'enqueued_scripts' => array(),
+	'enqueued_styles' => array(),
     'all_tags' => array(),
   	'post_tags' => array(),
     'sidebar_widgets' => array(),
@@ -719,6 +720,16 @@ function wp_enqueue_script($script) {
 function _did_wp_enqueue_script($script) {
   global $wp_test_expectations;
   return isset($wp_test_expectations['enqueued_scripts'][$script]);
+}
+
+/**
+ * Enqueue a stylesheet to be loaded
+ * @param string $style Name of the stylesheet
+ * @param string|boolean $src Path to the stylesheet from the root directory of WordPress.
+ */
+function wp_enqueue_style($style) {
+  global $wp_test_expectations;
+  $wp_test_expectations['enqueued_styles'][$style] = true;
 }
 
 /** Nonce **/
