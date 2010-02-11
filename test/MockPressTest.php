@@ -284,9 +284,14 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 	}
 
     function testEnqueueScript() {
-		global $wp_test_expectations;
-
 		wp_enqueue_script('test');
 		$this->assertTrue(_did_wp_enqueue_script('test'));
     }
+
+	function testEnqueueStyle() {
+		global $wp_test_expectations;
+
+		wp_enqueue_style('test');
+		$this->assertTrue($wp_test_expectations['enqueued_styles']['test']);
+	}
 }
