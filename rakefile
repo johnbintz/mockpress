@@ -1,0 +1,9 @@
+task :test_coverage do
+  if !uptodate?('coverage', Dir['test/*'])
+    `phpunit --coverage-html coverage test`
+  end
+end
+
+task :test do
+  `phpunit test`
+end

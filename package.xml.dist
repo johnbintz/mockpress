@@ -33,6 +33,7 @@ Built from http://github.com/johnbintz/mockpress
      <file name="media.php" role="php" />
      <file name="filtering.php" role="php" />
      <file name="posts.php" role="php" />
+     <file name="comments.php" role="php" />
    </dir>
   </dir>
  </contents>

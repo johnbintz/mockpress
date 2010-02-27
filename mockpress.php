@@ -11,6 +11,7 @@ require_once('includes/cache.php');
 require_once('includes/media.php');
 require_once('includes/posts.php');
 require_once('includes/filtering.php');
+require_once('includes/comments.php');
 
 /**
  * Reset the WordPress test expectations.
@@ -25,13 +26,14 @@ function _reset_wp() {
     'admin_pages' => array(),
     'pages' => array(),
   	'posts' => array(),
-    'actions' => array(),
+  	'comments' => array(),
+  	'actions' => array(),
     'filters' => array(),
     'post_meta' => array(),
     'themes' => array(),
     'plugin_domains' => array(),
     'enqueued_scripts' => array(),
-	'enqueued_styles' => array(),
+		'enqueued_styles' => array(),
     'all_tags' => array(),
   	'post_tags' => array(),
     'sidebar_widgets' => array(),
