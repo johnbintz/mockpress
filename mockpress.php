@@ -54,7 +54,8 @@ function _reset_wp() {
 		'current_user' => null,
 		'users' => array(),
 		'user_meta' => array(),
-		'image_downsize' => array()
+		'image_downsize' => array(),
+		'sites' => array(),
 	);
 
 	wp_cache_init();
@@ -1477,6 +1478,18 @@ function register_widget() {}
 
 function is_wp_error($object) {
 	return (is_a($object, "WP_Error"));
+}
+
+/** Multisite Functions **/
+
+/**
+ * Validates the passed username and email address against set criteria (no creteria will be considered in tests).
+ * @param $user_name  The username to be validated.
+ * @param $user_email The email address to be validated.
+ * @return Null No error found
+ */
+function wpmu_validate_user_signup($user_name, $user_email) {
+	return null;
 }
 
 // For use with SimpleXML

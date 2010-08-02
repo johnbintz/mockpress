@@ -294,4 +294,8 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		wp_enqueue_style('test');
 		$this->assertTrue($wp_test_expectations['enqueued_styles']['test']);
 	}
+
+	function testWpmuValidateUserSignup() {
+		$this->assertNull(wpmu_validate_user_signup("test", "user@example.com"));
+	}
 }
