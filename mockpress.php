@@ -1443,6 +1443,23 @@ function get_users_of_blog($id = '') {
 }
 
 /**
+ * Returns the user ID of the user specified by either username or registered email address.
+ * @param string $string String representation of the user to lookup the ID of. May be either the user's log in (their username), or the email address registered in WordPress.
+ * @return integer ID of the user specified by $string on success, null if no user is found.
+ */
+function get_user_id_from_string($string) {
+	global $wp_test_expectations;
+
+	foreach ($wp_test_expectations['users'] as $user) {
+		if ($user->user_login == $string || $user->user_email == $string) {
+			return $user->ID;
+		}
+	}
+
+	return null;
+}
+
+/**
  * Show the link to edit the current post.
  */
 function edit_post_link() {}

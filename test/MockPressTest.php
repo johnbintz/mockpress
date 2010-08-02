@@ -298,4 +298,17 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 	function testWpmuValidateUserSignup() {
 		$this->assertNull(wpmu_validate_user_signup("test", "user@example.com"));
 	}
+
+	function testGetUserIdFromString() {
+		_set_users_of_blog(array(
+			array(
+				'ID' => 1, 
+				'user_login' => "admin",
+				'user_email' => "user@example.com"
+			),
+		));
+
+		$this->assertNull(get_user_id_from_string('non-user@example.com'));
+		$this->assertEquals(get_user_id_from_string('user@example.com'), 1);
+	}
 }
