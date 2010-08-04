@@ -1528,6 +1528,20 @@ function wpmu_create_user($user_name, $password, $email) {
 	return $user_id;
 }
 
+
+/**
+ * Generates a random password drawn from the defined set of characters.
+ * @param int $length The length of password to generate
+ * @param bool $special_chars Whether to include standard special characters. Default true.
+ * @param bool $extra_special_chars Whether to include other special characters. Used when
+ *   generating secret keys and salts. Default false.
+ * @return string The random password
+ **/
+function wp_generate_password($length = 12, $special_chars = true, $extra_special_chars = false) {
+	return (string)rand();
+}
+
+
 // For use with SimpleXML
 
 $_xml_cache = array();

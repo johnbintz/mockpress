@@ -307,6 +307,10 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		)));
 	}
 
+	function testWpGeneratePassword() {
+		$this->assertTrue(strlen(wp_generate_password()) > 0);
+	}
+
 	function testGetUserIdFromString() {
 		_set_users_of_blog(array(
 			array(
