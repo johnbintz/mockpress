@@ -1509,6 +1509,25 @@ function wpmu_validate_user_signup($user_name, $user_email) {
 	return null;
 }
 
+/**
+ * Creates a new user account
+ * @param string $user_name The username of the user to be created
+ * @param string $password The password of the user to be created
+ * @param string $email The email address of the user to be created
+ * @return integer id of the user created
+ */
+function wpmu_create_user($user_name, $password, $email) {
+	$user_id = rand(1, 20);
+
+	_set_users_of_blog(array(
+		array(
+			'ID' => $user_id,
+		)
+	));
+
+	return $user_id;
+}
+
 // For use with SimpleXML
 
 $_xml_cache = array();
