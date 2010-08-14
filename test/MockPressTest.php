@@ -307,6 +307,15 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		)));
 	}
 
+	function testWpmuCreateBlog() {
+		$this->assertTrue(is_int(wpmu_create_blog(
+			"example.com",
+			"path",
+			"The Title",
+			1
+		)));
+	}
+
 	function testWpGeneratePassword() {
 		$this->assertTrue(strlen(wp_generate_password()) > 0);
 	}

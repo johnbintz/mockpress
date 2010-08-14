@@ -1528,6 +1528,21 @@ function wpmu_create_user($user_name, $password, $email) {
 	return $user_id;
 }
 
+/**
+ * Creates a new blog.
+ * @param string $domain The domain of the new blog.
+ * @param string $path The path of the new blog.
+ * @param string $title The title of the new blog.
+ * @param integer $user_id The user id of the user account who will be the blog admin.
+ * @param object $meta Other meta information.
+ * @param integer $site_id The site_id of the blog to be created.
+ * @return integer id of the blog created.
+ */
+function wpmu_create_blog($domain, $path, $title, $user_id, $meta = '', $site_id = 1) {
+	return rand(0, 100);
+}
+
+
 
 /**
  * Generates a random password drawn from the defined set of characters.
