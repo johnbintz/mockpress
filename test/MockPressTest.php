@@ -332,4 +332,11 @@ class MockPressTest extends PHPUnit_Framework_TestCase {
 		$this->assertNull(get_user_id_from_string('non-user@example.com'));
 		$this->assertEquals(get_user_id_from_string('user@example.com'), 1);
 	}
+
+	function testIsSubdomainInstall() {
+		$this->assertFalse(is_subdomain_install());
+
+		_set_multisite_configuration_type('subdomain');
+		$this->assertTrue(is_subdomain_install());
+	}
 }
