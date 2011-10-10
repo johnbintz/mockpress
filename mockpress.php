@@ -56,6 +56,9 @@ function _reset_wp() {
 		'user_meta' => array(),
 		'image_downsize' => array(),
 		'sites' => array(),
+		'multisite' => array(
+			'configuration_type' => 'subfolder'
+		),
 	);
 
 	wp_cache_init();
@@ -1542,8 +1545,6 @@ function wpmu_create_blog($domain, $path, $title, $user_id, $meta = '', $site_id
 	return rand(0, 100);
 }
 
-
-
 /**
  * Generates a random password drawn from the defined set of characters.
  * @param int $length The length of password to generate
@@ -1556,6 +1557,24 @@ function wp_generate_password($length = 12, $special_chars = true, $extra_specia
 	return (string)rand();
 }
 
+/**
+ * Whether a sub-domain configuration is enabled. This function was added in version 3.0.0.
+ * @return boolean True if sub-domain configuration is enabled, false otherwise.
+ */
+function is_subdomain_install() {
+	global $wp_test_expectations;
+	return $wp_test_expectations['multisite']['configuration_type'] == 'subdomain';
+}
+
+/**
+ * Set the multisite configuration type
+ * @param $type The type of multisite install (subdomain or subfolder)
+ * @return void
+ */
+function _set_multisite_configuration_type($type) {
+	global $wp_test_expectations;
+	$wp_test_expectations['multisite']['configuration_type'] = $type;
+}
 
 // For use with SimpleXML
 
@@ -1656,5 +1675,3 @@ function _get_node_value($xml, $xpath) {
 function _wrap_xml($string) {
 	return new SimpleXMLElement("<x>" . $string . "</x>");
 }
-
-?>
