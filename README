@@ -1,16 +1,4 @@
-This project is looking for a maintainer! Contact John if interested.
-
-A series of mock functions to simulate WordPress for use with a unit testing framework.
-
-PEAR module builds of MockPress are available at http://www.coswellproductions.com/mockpress/pear/.
-
-To install or upgrade as a PEAR module:
-
-pear upgrade -f <url of PEAR package>
-
-To uninstall:
-
-pear uninstall __uri/MockPress
+This project is now maintained at https://github.com/mines/mockpress
 
 Copyright (c) 2009 John Bintz
 
